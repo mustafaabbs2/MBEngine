@@ -6,6 +6,8 @@ set(SOURCES
     src/headservice.cpp
 )
 
+add_executable(grpc-server ${SOURCES})
+
 
 
 
