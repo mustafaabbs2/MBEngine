@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package kvstore;
+
+// The service definition.
+service KVStore {
+    rpc Put(PutRequest) returns (PutReply) {}
+    rpc Get(GetRequest) returns (GetReply) {}
+}
+
+// The request message containing the key-value pair to put.
+message PutRequest {
+    string key = 1;
+    string value = 2;
+}
+
+// The response message containing the result of the put operation.
+message PutReply {
+    bool success = 1;
+}
+
+// The request message containing the key to get the value for.
+message GetRequest {
+    string key = 1;
+}
+
+// The response message containing the value for the requested key.
+message GetReply {
+    string value = 1;
+}

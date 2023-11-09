@@ -7,7 +7,14 @@ message("Configuring Server..")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(BOOST_WORKING FALSE)
+set(GRPC_WORKING FALSE)
+
 
 add_subdirectory(renderer)
+if (${GRPC_WORKING})
 add_subdirectory(remoting)
-add_subdirectory(webserver)
+endif()
+if (${BOOST_WORKING})
+    add_subdirectory(webserver)
+endif()
