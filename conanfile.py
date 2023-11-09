@@ -20,6 +20,10 @@ class MyLibraryConan(ConanFile):
         self.requires("grpc/1.47.1")
         self.requires("zlib/1.3")
 
+
+# Generators are Conan features that help create build files, project files, and other artifacts 
+# that are specific to different build systems or development environments.
+
     def configure(self):
         self.generators = ["cmake_find_package", "virtualenv", "cmake"]
 

@@ -27,7 +27,7 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
         },
         {
             "label": "Conan install (Debug)",
@@ -38,7 +38,7 @@
             "command": "./conan_install.sh Debug",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/Build"
+                "cwd": "${workspaceRoot}/build"
             }
         },
         {
@@ -50,7 +50,7 @@
             "command": "./conan_install.sh Release",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/Build"
+                "cwd": "${workspaceRoot}/build"
             }
         },
         {
