@@ -8,6 +8,4 @@ set(SOURCES
 
 add_executable(grpc-server ${SOURCES})
 
-
-
-
+# target_include_directories(grpc-server PRIVATE include)
