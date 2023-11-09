@@ -7,5 +7,7 @@ message("Configuring Server..")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_subdirectory(grpc)
+
+add_subdirectory(renderer)
+add_subdirectory(remoting)
 add_subdirectory(webserver)
