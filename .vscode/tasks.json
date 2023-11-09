@@ -33,7 +33,8 @@
             "label": "Conan install (Debug)",
             "type": "shell",
             "windows" : {
-                "command": "./conan_install.ps1 Debug",
+                "command": "pwsh",
+                "args": ["-File", "${workspaceFolder}/BuildScripts/conan_install.ps1", "Debug"],
             },
             "command": "./conan_install.sh Debug",
             "problemMatcher": [],
@@ -45,7 +46,8 @@
             "label": "Conan install (Release)",
             "type": "shell",
             "windows" : {
-                "command": "./conan_install.ps1 Release",
+                "command": "pwsh",
+                "args": ["-File", "${workspaceFolder}/BuildScripts/conan_install.ps1", "Release"],
             },
             "command": "./conan_install.sh Release",
             "problemMatcher": [],
