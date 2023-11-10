@@ -3,7 +3,6 @@
 #include <iostream>
 #include <mutex>
 
-
 using boost::asio::ip::tcp;
 
 class ChatRoom
@@ -53,7 +52,6 @@ private:
 	std::mutex mutex_;
 };
 
-
 //enable a shared pointer to be retrieved from shared_from_this-->
 class ChatSession : public std::enable_shared_from_this<ChatSession>
 {
@@ -74,10 +72,10 @@ private:
 	{
 		auto self(shared_from_this());
 
-		// Initiates an asynchronous read operation on the specified socket -> reads until buffer is full or error code.. 
+		// Initiates an asynchronous read operation on the specified socket -> reads until buffer is full or error code..
 
-		// When the read operation completes (either successfully or due to an error), 
-		// the provided completion handler is invoked. 
+		// When the read operation completes (either successfully or due to an error),
+		// the provided completion handler is invoked.
 		// The handler is responsible for handling the results of the operation. --> the lambda is the handler
 
 		boost::asio::async_read_until(
@@ -105,17 +103,15 @@ private:
 		return data;
 	}
 
-	  tcp::socket& getSocket() {
-        return std::make_shared<tcp::socket>(socket_);
-    }
-
+	std::shared_ptr<tcp::socket> getSocket()
+	{
+		return std::make_shared<tcp::socket>(std::move(socket_));
+	}
 
 	tcp::socket socket_;
 	boost::asio::streambuf buffer_;
 	ChatRoom& room_;
 };
-
-
 
 class ChatServer
 {
