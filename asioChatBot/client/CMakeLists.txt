@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
-project(webserver)
-message("Configuring webserver..")
+project(chatClient)
+message("Configuring client..")
 
 set(SOURCES
-    src/server.cpp
+    src/client.cpp
 )
 
 set(Boost_USE_STATIC_LIBS ON)

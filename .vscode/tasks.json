@@ -39,7 +39,7 @@
             "command": "./conan_install.sh Debug",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/build"
+                "cwd": "${workspaceRoot}/BuildScripts"
             }
         },
         {
@@ -52,7 +52,7 @@
             "command": "./conan_install.sh Release",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/build"
+                "cwd": "${workspaceRoot}/BuildScripts"
             }
         },
         {
