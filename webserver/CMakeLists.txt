@@ -13,6 +13,11 @@ include_directories(
 ${Boost_INCLUDE_DIRS}
 )
 
+#needed for compiling on windows
+add_definitions(-DBOOST_DATE_TIME_NO_LIB)
+add_definitions(-DBOOST_REGEX_NO_LIB)
+
+
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_link_directories(${PROJECT_NAME} PUBLIC

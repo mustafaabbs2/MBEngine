@@ -83,10 +83,10 @@ int main(int argc, char** argv) {
 
   std::string response;
 
-  std::string wrongkey("44");
-  reply = kvclient.Get(wrongkey, &response);
+  // std::string wrongkey("44");
+  reply = kvclient.Get(key, &response);
   
-  // std::cout << "The value of the key: "<< key <<" is " << response << std::endl;
+  std::cout << "The value of the key: "<< key <<" is " << response << std::endl;
 
   return 0;
 }
