@@ -103,6 +103,7 @@ int main(int argc, char* argv[])
 		if(argc != 3)
 		{
 			std::cerr << "Usage: chat_client <host> <port>\n";
+			// .\chatClient.exe localhost 12345
 			return 1;
 		}
 
