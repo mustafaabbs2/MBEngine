@@ -32,9 +32,13 @@
         {
             "label": "Conan install (Debug)",
             "type": "shell",
-            "windows" : {
+            "windows": {
                 "command": "pwsh",
-                "args": ["-File", "${workspaceFolder}/BuildScripts/conan_install.ps1", "Debug"],
+                "args": [
+                    "-File",
+                    "${workspaceFolder}/BuildScripts/conan_install.ps1",
+                    "Debug"
+                ],
             },
             "command": "./conan_install.sh Debug",
             "problemMatcher": [],
@@ -45,9 +49,25 @@
         {
             "label": "Conan install (Release)",
             "type": "shell",
-            "windows" : {
+            "windows": {
                 "command": "pwsh",
-                "args": ["-File", "${workspaceFolder}/BuildScripts/conan_install.ps1", "Release"],
+                "args": [
+                    "-File",
+                    "${workspaceFolder}/BuildScripts/conan_install.ps1",
+                    "Release"
+                ],
+            },
+            "linux": {
+                "command": "./conan_install.sh",
+                "args": [
+                    "Release"
+                ],
+            },
+            "osx": {
+                "command": "./conan_install_macos.sh",
+                "args": [
+                    "Release"
+                ],
             },
             "command": "./conan_install.sh Release",
             "problemMatcher": [],
@@ -58,7 +78,7 @@
         {
             "label": "CMake Configure (Debug)",
             "type": "shell",
-            "windows" : {
+            "windows": {
                 "command": "cmake --preset=MSVC_Debug",
             },
             "command": "cmake --preset=Linux_Debug",
@@ -70,7 +90,7 @@
         {
             "label": "CMake Configure (Release)",
             "type": "shell",
-            "windows" : {
+            "windows": {
                 "command": "cmake --preset=MSVC_Release",
             },
             "command": "cmake --preset=Linux_Release",
