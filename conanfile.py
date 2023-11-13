@@ -17,11 +17,12 @@ class MyLibraryConan(ConanFile):
         self.requires("gtest/1.10.0")
         self.requires("boost/1.71.0")
         # self.requires("protobuf/3.21.9")
-        self.requires("grpc/1.50.0")
+        self.requires("grpc/1.47.1")
         self.requires("zlib/1.3")
         self.requires("glfw/3.3.4")
         self.requires("glew/2.2.0")
         self.requires("libpng/1.6.37")
+
         
 
 # Generators are Conan features that help create build files, project files, and other artifacts 

@@ -7,10 +7,17 @@ message("Configuring Server..")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(GRPC_WORKING FALSE)
 
 
-add_subdirectory(Graphics)
+if(GRPC_WORKING) #issue with the grpc version --> can be resolved by using >VS2019 14.28 and above for windows
 add_subdirectory(RemotingService)
+endif()
+add_subdirectory(Graphics)
 add_subdirectory(ChatService)
 add_subdirectory(RayTracer)
 add_subdirectory(FlowSolver)
+add_subdirectory(SyntaxTree)
+add_subdirectory(Tests)
+
+
