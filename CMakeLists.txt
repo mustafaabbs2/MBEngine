@@ -9,6 +9,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(GRPC_WORKING FALSE)
 set(CUDA_ENABLED FALSE)
+set(PYTHON_ENABLED FALSE)
+
 
 
 if(GRPC_WORKING) #issue with the grpc version --> can be resolved by using >VS2019 14.28 and above for windows
@@ -20,7 +22,9 @@ if(CUDA_ENABLED)
 add_subdirectory(RayTracer)
 endif()
 add_subdirectory(FlowSolver)
+if(PYTHON_ENABLED)
 add_subdirectory(SyntaxTree)
+endif()
 add_subdirectory(Tests)
 
 

@@ -17,6 +17,7 @@ class MyLibraryConan(ConanFile):
         self.requires("gtest/1.10.0")
         self.requires("boost/1.71.0")
         # self.requires("protobuf/3.21.9")
+        self.requires("pybind11/2.6.2")
         self.requires("grpc/1.47.1")
         self.requires("zlib/1.3")
         self.requires("glfw/3.3.4")
