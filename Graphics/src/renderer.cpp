@@ -5,8 +5,9 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
 #include <fstream>
+#include <iostream>
+
 
 #if QT
 #	include "QT\QtGUI.hpp"
@@ -48,6 +49,25 @@ std::string readShaderFile(const char* filePath)
 	std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 	return content;
 }
+
+const char* vertexSource = R"glsl(
+#version 330 core
+layout (location = 0) in vec3 aPos;
+
+void main() {
+    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+}
+)glsl";
+
+const char* fragmentSource = R"glsl(
+#version 330 core
+out vec4 FragColor;
+
+void main() {
+    FragColor = vec4(1.0, 0.5, 0.2, 1.0); // Orange color
+}
+
+)glsl";
 
 // Function to compile a shader
 GLuint compileShader(const char* shaderSource, GLenum shaderType)
@@ -111,13 +131,16 @@ int main(int argc, char* argv[])
 
 	setupImGUI(window);
 
-	// Read and compile vertex shader
-	std::string vertexShaderSource = readShaderFile("shaders/vertexShader.glsl");
-	GLuint vertexShader = compileShader(vertexShaderSource.c_str(), GL_VERTEX_SHADER);
+	//When reading from .glsl
 
-	// Read and compile fragment shader
-	std::string fragmentShaderSource = readShaderFile("shaders/fragmentShader.glsl");
-	GLuint fragmentShader = compileShader(fragmentShaderSource.c_str(), GL_FRAGMENT_SHADER);
+	// // Read and compile vertex shader
+	// std::string vertexShaderSource = readShaderFile("shaders/vertexShader.glsl");
+	GLuint vertexShader = compileShader(vertexSource, GL_VERTEX_SHADER);
+
+	// // Read and compile fragment shader
+	// std::string fragmentShaderSource = readShaderFile("shaders/fragmentShader.glsl");
+	GLuint fragmentShader = compileShader(fragmentSource, GL_FRAGMENT_SHADER);
+
 
 	// Link shaders into a shader program
 	GLuint shaderProgram = glCreateProgram();
@@ -156,9 +179,14 @@ int main(int argc, char* argv[])
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
+	
 	// Specify the layout of the vertex data
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 	glEnableVertexAttribArray(0);
+
+	//shaders have ben bound, you can delete them
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
 
 	// Loop until the user closes the window
 	while(!glfwWindowShouldClose(window))
@@ -170,13 +198,19 @@ int main(int argc, char* argv[])
 
 		// Clear the color buffer
 		glClear(GL_COLOR_BUFFER_BIT);
+
 		// Use the shader program...
+		glUseProgram(shaderProgram);
 
 		// Bind the VAO and draw the triangle
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+
 		// Unbind the VAO
 		glBindVertexArray(0);
+		//unbind the shader
+		glUseProgram(0);
 
 		// render your GUI
 		ImGui::Begin("Demo window");
