@@ -6,8 +6,19 @@
 #include <iostream>
 
 
-int main()
+
+#include <QApplication>
+#include <QtPlugin>
+Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin)
+#include "QT\QtGUI.hpp"
+
+
+int main(int argc, char *argv[])
 {
+	QApplication app(argc, argv);
+    setupHelloQt();
+
+
 	// Initialize GLFW
 	if(!glfwInit())
 	{
