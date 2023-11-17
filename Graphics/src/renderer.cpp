@@ -1,23 +1,22 @@
 
 #define GLEW_STATIC
+#define QT 0
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 
 
-
-#include <QApplication>
-#include <QtPlugin>
-Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin)
+#if QT
 #include "QT\QtGUI.hpp"
-
+#endif
 
 int main(int argc, char *argv[])
 {
+#if QT
 	QApplication app(argc, argv);
     setupHelloQt();
-
+#endif
 
 	// Initialize GLFW
 	if(!glfwInit())

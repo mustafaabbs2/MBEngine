@@ -3,6 +3,11 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
+#if _NT
+#include <QtPlugin>
+Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin)
+#endif
+
 void setupHelloQt() {
     // Create the main application window
     QWidget window;
