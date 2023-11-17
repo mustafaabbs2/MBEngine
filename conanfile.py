@@ -24,6 +24,8 @@ class MyLibraryConan(ConanFile):
         self.requires("glew/2.2.0")
         self.requires("libpng/1.6.37")
         self.requires("qt/5.15.7")
+        self.requires("imgui/1.89.4")
+
 
         
 

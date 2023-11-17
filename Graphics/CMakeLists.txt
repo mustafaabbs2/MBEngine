@@ -7,7 +7,16 @@ set(SOURCES
 )
 
 set(UI_SOURCES
-    src/QT/QtGUI.cpp
+    src/qt/QtGUI.cpp
+    src/imgui/imgui_impl_glfw.cpp
+    src/imgui/imgui_impl_opengl3.cpp
+    src/imgui/imgui.cpp
+	src/imgui/imgui_demo.cpp
+	src/imgui/imgui_draw.cpp
+	src/imgui/imgui_impl_glfw.cpp
+	src/imgui/imgui_impl_opengl3.cpp
+	src/imgui/imgui_tables.cpp
+	src/imgui/imgui_widgets.cpp
 )
 
 
@@ -15,6 +24,8 @@ find_package(OpenGL REQUIRED)
 find_package(glfw3)
 find_package(GLEW)
 find_package(Qt5 COMPONENTS Widgets Core Gui REQUIRED)
+find_package(imgui REQUIRED) #do I need this if everything is part of the project anyway?
+
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -27,6 +38,7 @@ ${glfw_INCLUDE_DIRS}
 ${GLEW_INCLUDE_DIRS}
 ${Qt5Widgets_INCLUDE_DIRS}
 include/
+src/
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${UI_SOURCES})
@@ -35,7 +47,8 @@ target_link_libraries(${PROJECT_NAME}
 ${OPENGL_LIBRARIES}
 ${glfw_LIBRARIES}
 ${GLEW_LIBRARIES}
- Qt5::Widgets
+Qt5::Widgets
+imgui::imgui
 )
 
 

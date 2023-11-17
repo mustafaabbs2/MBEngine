@@ -1,4 +1,4 @@
 #include <QApplication>
 #include <QLabel>
 
-void setupHelloQt();
+void setupQt();

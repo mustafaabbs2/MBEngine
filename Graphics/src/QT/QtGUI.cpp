@@ -8,7 +8,7 @@
 Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin)
 #endif
 
-void setupHelloQt() {
+void setupQt() {
     // Create the main application window
     QWidget window;
     window.setWindowTitle("Hello, Qt!");
