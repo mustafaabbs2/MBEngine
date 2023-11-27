@@ -10,5 +10,4 @@ enum class Shape {
   FACET,
 };
 
-void Render(GLFWwindow* window, Shape shape);
-void RenderWithGUI();
+void Render(GLFWwindow* window, Shape shape, bool withGui);
