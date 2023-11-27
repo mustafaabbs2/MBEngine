@@ -153,10 +153,15 @@ void Render(GLFWwindow* window, Shape shape, bool withGui = false)
 		}
 		for(size_t i = 0; i < offsets.size(); ++i)
 		{
-			glUniform1f(scaleLocation, 20.0f); // Set scale here if needed
-			glDrawArrays(GL_LINE_LOOP, 0, nodeCoordinates.size() / 3);
+			glDrawArrays(GL_LINE_LOOP, offsets[i], 4);
 			//gldrawelement array => needs connectivity
+
+			// glDrawElements(GL_QUADS, indices.size(), GL_UNSIGNED_INT, 0);
+
 		}
+
+		// glDrawArrays(GL_POINTS, 0, nodeCoordinates.size() / 3);
+
 
 		if(withGui)
 		{
@@ -169,7 +174,7 @@ void Render(GLFWwindow* window, Shape shape, bool withGui = false)
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		}
 
-		glBindVertexArray(0);
+		// glBindVertexArray(0); --> will remove the render
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
