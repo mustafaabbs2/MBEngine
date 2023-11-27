@@ -7,6 +7,7 @@
 enum class Shape {
   TRIANGLE,
   RECTANGLE,
+  FACET,
 };
 
 void Render(GLFWwindow* window, Shape shape);
