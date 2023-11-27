@@ -26,23 +26,25 @@ set(IMGUI_SOURCES
 find_package(OpenGL REQUIRED)
 find_package(glfw3)
 find_package(GLEW)
-find_package(Qt5 COMPONENTS Widgets Core Gui REQUIRED)
-find_package(imgui REQUIRED) #do I need this if everything is part of the project anyway?
+#find_package(Qt5 COMPONENTS Widgets Core Gui REQUIRED)
+#find_package(imgui REQUIRED) #do I need this if everything is part of the project anyway?
 
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
+#set(CMAKE_AUTOMOC ON)
+#set(CMAKE_AUTOUIC ON)
+#set(CMAKE_AUTORCC ON)
 
 
 include_directories(
 ${OPENGL_INCLUDE_DIR}
 ${glfw_INCLUDE_DIRS}
 ${GLEW_INCLUDE_DIRS}
-${Qt5Widgets_INCLUDE_DIRS}
 include/
 src/
 )
+
+#${Qt5Widgets_INCLUDE_DIRS}
+
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${IMGUI_SOURCES})
 
@@ -50,10 +52,12 @@ target_link_libraries(${PROJECT_NAME}
 ${OPENGL_LIBRARIES}
 ${glfw_LIBRARIES}
 ${GLEW_LIBRARIES}
-Qt5::Widgets
-imgui::imgui
 )
 
+#Qt5::Widgets
+
+target_include_directories(${PROJECT_NAME}PRIVATE 
+src/)
 
 
 
