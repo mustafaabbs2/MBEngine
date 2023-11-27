@@ -1,5 +1,4 @@
 
-#include "ShaderUtils.hpp"
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -43,7 +42,7 @@ GLuint compileShader(const char* shaderSource, GLenum shaderType)
 }
 
 
-std::vector<float> rearrangeCoordinates(const std::vector<float>& originalCoordinates)
+std::vector<float>  rearrangeCoordinates(const std::vector<float>& originalCoordinates)
 {
 	// Ensure the size is a multiple of 3
 	if(originalCoordinates.size() % 3 != 0)
@@ -70,3 +69,26 @@ std::vector<float> rearrangeCoordinates(const std::vector<float>& originalCoordi
 	return rearrangedCoordinates;
 }
 
+
+void writeObjFile(const std::vector<float>& nodeCoordinates, const std::vector<int>& offsets, const std::string& filePath) {
+    std::ofstream outFile(filePath);
+    if (!outFile.is_open()) {
+        std::cerr << "Error opening file: " << filePath << std::endl;
+        return;
+    }
+
+    for (size_t i = 0; i < nodeCoordinates.size(); i += 3) {
+        outFile << "v " << nodeCoordinates[i] << " " << nodeCoordinates[i + 1] << " " << nodeCoordinates[i + 2] << std::endl;
+    }
+
+    for (size_t i = 0; i < offsets.size(); ++i) {
+        outFile << "f ";
+        for (int j = 0; j < 3; ++j) {
+            int index = offsets[i] + j + 1;  
+            outFile << index << " ";
+        }
+        outFile << std::endl;
+    }
+
+    outFile.close();
+}

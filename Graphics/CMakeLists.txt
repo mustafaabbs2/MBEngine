@@ -5,6 +5,9 @@ project(Graphics)
 set(SOURCES
     src/main.cpp
     src/Render.cpp
+	src/ImguiUtils.cpp
+	src/ShaderUtils.cpp
+	src/WindowUtils.cpp
 )
 
 set(IMGUI_SOURCES
@@ -41,10 +44,7 @@ include/
 src/
 )
 
-add_executable(${PROJECT_NAME} ${SOURCES})
-
-#add_executable(${PROJECT_NAME} ${SOURCES} ${IMGUI_SOURCES})
-
+add_executable(${PROJECT_NAME} ${SOURCES} ${IMGUI_SOURCES})
 
 target_link_libraries(${PROJECT_NAME}
 ${OPENGL_LIBRARIES}
