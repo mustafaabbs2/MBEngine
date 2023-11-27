@@ -4,11 +4,10 @@ project(Graphics)
 
 set(SOURCES
     src/main.cpp
-    src/RenderBox.cpp
+    src/Render.cpp
 )
 
-set(UI_SOURCES
-    src/qt/QtGUI.cpp
+set(IMGUI_SOURCES
     src/imgui/imgui_impl_glfw.cpp
     src/imgui/imgui_impl_opengl3.cpp
     src/imgui/imgui.cpp
@@ -44,7 +43,7 @@ src/
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-#add_executable(${PROJECT_NAME} ${SOURCES} ${UI_SOURCES})
+#add_executable(${PROJECT_NAME} ${SOURCES} ${IMGUI_SOURCES})
 
 
 target_link_libraries(${PROJECT_NAME}
