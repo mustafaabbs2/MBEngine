@@ -11,7 +11,8 @@
 void Render(GLFWwindow* window, Shape shape)
 {
 
-	std::vector<float> nodeCoordinates, offsets;
+	std::vector<float> nodeCoordinates;
+	std::vector<int> offsets;
 
 	if(shape == Shape::TRIANGLE)
 	{
@@ -36,6 +37,7 @@ void Render(GLFWwindow* window, Shape shape)
 						   -1}; // Second triangle
 
 		offsets = {3, 6};
+		writeObjFile(nodeCoordinates, offsets, "triangle.obj");
 	}
 
 	if(shape == Shape::RECTANGLE)

@@ -84,7 +84,7 @@ void writeObjFile(const std::vector<float>& nodeCoordinates, const std::vector<i
     for (size_t i = 0; i < offsets.size(); ++i) {
         outFile << "f ";
         for (int j = 0; j < 3; ++j) {
-            int index = offsets[i] + j + 1;  
+            int index = offsets[i] + j - 3;  
             outFile << index << " ";
         }
         outFile << std::endl;
