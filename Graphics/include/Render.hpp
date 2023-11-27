@@ -1,7 +1,13 @@
 
 #pragma once
-#define GLEW_STATIC
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 
-void RenderBox();
+enum class Shape {
+  TRIANGLE,
+  RECTANGLE,
+};
+
+void Render(GLFWwindow* window, Shape shape);
 void RenderWithGUI();

@@ -1,47 +1,48 @@
+#define GLEW_STATIC
+#include "ImguiUtils.hpp"
 #include "Render.hpp"
 #include "ShaderUtils.hpp"
-#include "ImguiUtils.hpp"
 #include "WindowUtils.hpp"
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>
 
-void RenderBox()
+void Render(GLFWwindow* window, Shape shape)
 {
 
-	std::vector<float> nodeCoordinates = {-1, -1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1,
-										  -1, -1, 1,  1, -1, 1,  1, 1, 1,  -1, 1, 1};
+	std::vector<float> nodeCoordinates, offsets;
 
-	std::vector<float> offsets = {3, 6, 9, 12, 15, 18, 21, 24};
-
-	std::cout << nodeCoordinates.size();
-
-	if(!glfwInit())
+	if(shape == Shape::TRIANGLE)
 	{
-		std::cerr << "Failed to initialize GLFW\n";
-		return;
+
+		nodeCoordinates = {-1,
+						   -1,
+						   -0.5,
+						   1,
+						   -1,
+						   -1,
+						   1,
+						   1,
+						   -1, // First triangle
+						   -1,
+						   1,
+						   -0.5,
+						   1,
+						   1,
+						   -1,
+						   1,
+						   1,
+						   -1}; // Second triangle
+
+		offsets = {3, 6};
 	}
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL Example", nullptr, nullptr);
-	if(!window)
+	if(shape == Shape::RECTANGLE)
 	{
-		std::cerr << "Failed to create GLFW window\n";
-		glfwTerminate();
-		return;
-	}
+		nodeCoordinates = {-1, -1, -0.5, 1, -1, -1, 1, 1, -1, -1, 1, -1,
+						   -1, -1, 1,	1, -1, 1,  1, 1, 1,  -1, 1, 1};
 
-	glfwMakeContextCurrent(window);
-
-	if(glewInit() != GLEW_OK)
-	{
-		std::cerr << "Failed to initialize GLEW\n";
-		return;
+		offsets = {3, 6, 9, 12, 15, 18, 21, 24};
 	}
 
 	GLuint VAO, VBO;
@@ -73,11 +74,7 @@ void RenderBox()
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
 
-	//do I need this? it's too small
-	float scale_factor = 20;
 	GLint scaleLocation = glGetUniformLocation(shaderProgram, "scale");
-	glUniform1f(scaleLocation, scale_factor);
-
 	glUseProgram(shaderProgram);
 
 	// Main rendering loop
@@ -87,7 +84,8 @@ void RenderBox()
 
 		for(size_t i = 0; i < offsets.size(); ++i)
 		{
-			glDrawArrays(GL_LINE_LOOP, offsets[i], offsets[i]);
+			glUniform1f(scaleLocation, 20.0f); // Set scale here if needed
+			glDrawArrays(GL_LINE_LOOP, 0, nodeCoordinates.size() / 3);
 		}
 
 		glfwSwapBuffers(window);
@@ -98,10 +96,7 @@ void RenderBox()
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteProgram(shaderProgram);
-	glfwTerminate();
 }
-
-
 
 // void RenderWithGUI()
 // {
@@ -154,7 +149,6 @@ void RenderBox()
 // 	// std::string fragmentSource = readShaderFile("shaders/fragmentShader.glsl");
 // 	GLuint fragmentShader = compileShader(fragmentSource, GL_FRAGMENT_SHADER);
 
-
 // 	// Link shaders into a shader program
 // 	GLuint shaderProgram = glCreateProgram();
 // 	glAttachShader(shaderProgram, vertexShader);
@@ -192,7 +186,7 @@ void RenderBox()
 // 	GLuint vao;
 // 	glGenVertexArrays(1, &vao);
 // 	glBindVertexArray(vao);
-	
+
 // 	// Specify the layout of the vertex data
 // 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 // 	glEnableVertexAttribArray(0);
@@ -218,7 +212,6 @@ void RenderBox()
 // 		// Bind the VAO and draw the triangle
 // 		glBindVertexArray(vao);
 // 		glDrawArrays(GL_TRIANGLES, 0, 3);
-
 
 // 		// Unbind the VAO
 // 		glBindVertexArray(0);
