@@ -37,7 +37,7 @@ void Render(GLFWwindow* window, Shape shape, bool withGui = false)
 						   -1}; // Second triangle
 
 		offsets = {3, 6};
-		writeObjFile(nodeCoordinates, offsets, "triangle.obj");
+		writeObjFile(nodeCoordinates, offsets, "triangle.obj", true);
 	}
 
 	if(shape == Shape::RECTANGLE)
@@ -86,18 +86,18 @@ void Render(GLFWwindow* window, Shape shape, bool withGui = false)
 		std::transform(nodeCoordinates.begin(),
 					   nodeCoordinates.end(),
 					   nodeCoordinates.begin(),
-					   [](float x) { return x * (float)500.0; });
+					   [](float x) { return x * (float)1000.0; });
 
 		// for(size_t i = 0; i < 300; i++)
 		// {
 		// 	std::cout << nodeCoordinates[i] << " ";
 		// }
 
-		writeObjFile(nodeCoordinates, offsets, "facet.obj");
 
 		offsets = {4,  8,  12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52,
 				   56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100};
 
+		writeObjFile(nodeCoordinates, offsets, "facet.obj", false);
 		//nf (4 1 2 3 4   4 5 6 7 8   4 9 10 11 12 ... )
 	}
 

@@ -39,7 +39,7 @@ int main()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Setup buffers and shaders
-	Render(mywindow, Shape::TRIANGLE, true);
+	Render(mywindow, Shape::FACET, true);
 
 	// Terminate GLFW and exit
 	glfwTerminate();

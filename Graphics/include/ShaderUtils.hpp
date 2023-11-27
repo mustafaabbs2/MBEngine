@@ -9,7 +9,7 @@
 std::string readShaderFile(const char* filePath);
 GLuint compileShader(const char* shaderSource, GLenum shaderType);
 std::vector<float> rearrangeCoordinates(const std::vector<float>& originalCoordinates);
-void writeObjFile(const std::vector<float>& nodeCoordinates, const std::vector<int>& offsets, const std::string& filePath);
+void writeObjFile(const std::vector<float>& nodeCoordinates, const std::vector<int>& offsets, const std::string& filePath, bool tris);
 
 
 const char* vertexSource = R"glsl(
