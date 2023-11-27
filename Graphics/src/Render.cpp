@@ -148,148 +148,148 @@ void Render(GLFWwindow* window, Shape shape)
 	glDeleteProgram(shaderProgram);
 }
 
-// void RenderWithGUI()
-// {
-// 	// Initialize GLFW
-// 	if(!glfwInit())
-// 	{
-// 		std::cerr << "Failed to initialize GLFW" << std::endl;
-// 		return;
-// 	}
+void RenderWithGUI()
+{
+	// Initialize GLFW
+	if(!glfwInit())
+	{
+		std::cerr << "Failed to initialize GLFW" << std::endl;
+		return;
+	}
 
-// 	// Create a windowed mode window and its OpenGL context
-// 	GLFWwindow* window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-// 	if(!window)
-// 	{
-// 		std::cerr << "Failed to create GLFW window" << std::endl;
-// 		glfwTerminate();
-// 		return;
-// 	}
+	// Create a windowed mode window and its OpenGL context
+	GLFWwindow* window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+	if(!window)
+	{
+		std::cerr << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		return;
+	}
 
-// 	// Make the window's context current
-// 	glfwMakeContextCurrent(window);
+	// Make the window's context current
+	glfwMakeContextCurrent(window);
 
-// 	// Set swap interval to 1 to enable vsync
-// 	glfwSwapInterval(1);
-// 	// Initialize GLEW
-// 	glewExperimental = true; // Needed in core profile
-// 	if(glewInit() != GLEW_OK)
-// 	{
-// 		std::cerr << "Failed to initialize GLEW" << std::endl;
-// 		glfwDestroyWindow(window);
-// 		glfwTerminate();
-// 		return;
-// 	}
+	// Set swap interval to 1 to enable vsync
+	glfwSwapInterval(1);
+	// Initialize GLEW
+	glewExperimental = true; // Needed in core profile
+	if(glewInit() != GLEW_OK)
+	{
+		std::cerr << "Failed to initialize GLEW" << std::endl;
+		glfwDestroyWindow(window);
+		glfwTerminate();
+		return;
+	}
 
-// 	// Enable depth testing
-// 	glEnable(GL_DEPTH_TEST);
+	// Enable depth testing
+	glEnable(GL_DEPTH_TEST);
 
-// 	// Clear color buffer bit
-// 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	// Clear color buffer bit
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-// 	setupImGUI(window);
+	setupImGUI(window);
 
-// 	//When reading from .glsl
+	//When reading from .glsl
 
-// 	// // Read and compile vertex shader
-// 	// std::string vertexSource = readShaderFile("shaders/vertexShader.glsl");
-// 	GLuint vertexShader = compileShader(vertexSource, GL_VERTEX_SHADER);
+	// // Read and compile vertex shader
+	// std::string vertexSource = readShaderFile("shaders/vertexShader.glsl");
+	GLuint vertexShader = compileShader(vertexSource, GL_VERTEX_SHADER);
 
-// 	// // Read and compile fragment shader
-// 	// std::string fragmentSource = readShaderFile("shaders/fragmentShader.glsl");
-// 	GLuint fragmentShader = compileShader(fragmentSource, GL_FRAGMENT_SHADER);
+	// // Read and compile fragment shader
+	// std::string fragmentSource = readShaderFile("shaders/fragmentShader.glsl");
+	GLuint fragmentShader = compileShader(fragmentSource, GL_FRAGMENT_SHADER);
 
-// 	// Link shaders into a shader program
-// 	GLuint shaderProgram = glCreateProgram();
-// 	glAttachShader(shaderProgram, vertexShader);
-// 	glAttachShader(shaderProgram, fragmentShader);
-// 	glLinkProgram(shaderProgram);
+	// Link shaders into a shader program
+	GLuint shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
 
-// 	// Check for program linking errors
-// 	GLint success;
-// 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-// 	if(!success)
-// 	{
-// 		char infoLog[512];
-// 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-// 		std::cerr << "Shader program linking failed:\n" << infoLog << std::endl;
-// 		return;
-// 	}
+	// Check for program linking errors
+	GLint success;
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	if(!success)
+	{
+		char infoLog[512];
+		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+		std::cerr << "Shader program linking failed:\n" << infoLog << std::endl;
+		return;
+	}
 
-// 	GLfloat vertices[] = {
-// 		0.5f,
-// 		0.5f,
-// 		0.0f, // top right
-// 		-0.5f,
-// 		0.5f,
-// 		0.0f, // bottom left
-// 		0.0f,
-// 		-0.5f,
-// 		0.0f // bottom center
-// 	};
+	GLfloat vertices[] = {
+		0.5f,
+		0.5f,
+		0.0f, // top right
+		-0.5f,
+		0.5f,
+		0.0f, // bottom left
+		0.0f,
+		-0.5f,
+		0.0f // bottom center
+	};
 
-// 	GLuint vbo;
-// 	glGenBuffers(1, &vbo);
-// 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-// 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-// 	// Create and bind a vertex array object (VAO)
-// 	GLuint vao;
-// 	glGenVertexArrays(1, &vao);
-// 	glBindVertexArray(vao);
+	GLuint vbo;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	// Create and bind a vertex array object (VAO)
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
 
-// 	// Specify the layout of the vertex data
-// 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
-// 	glEnableVertexAttribArray(0);
+	// Specify the layout of the vertex data
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
+	glEnableVertexAttribArray(0);
 
-// 	//shaders have ben bound, you can delete them
-// 	glDeleteShader(vertexShader);
-// 	glDeleteShader(fragmentShader);
+	//shaders have ben bound, you can delete them
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
 
-// 	// Loop until the user closes the window
-// 	while(!glfwWindowShouldClose(window))
-// 	{
-// 		// feed inputs to dear imgui, start new frame
-// 		ImGui_ImplOpenGL3_NewFrame();
-// 		ImGui_ImplGlfw_NewFrame();
-// 		ImGui::NewFrame();
+	// Loop until the user closes the window
+	while(!glfwWindowShouldClose(window))
+	{
+		// feed inputs to dear imgui, start new frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 
-// 		// Clear the color buffer
-// 		glClear(GL_COLOR_BUFFER_BIT);
+		// Clear the color buffer
+		glClear(GL_COLOR_BUFFER_BIT);
 
-// 		// Use the shader program...
-// 		glUseProgram(shaderProgram);
+		// Use the shader program...
+		glUseProgram(shaderProgram);
 
-// 		// Bind the VAO and draw the triangle
-// 		glBindVertexArray(vao);
-// 		glDrawArrays(GL_TRIANGLES, 0, 3);
+		// Bind the VAO and draw the triangle
+		glBindVertexArray(vao);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 
-// 		// Unbind the VAO
-// 		glBindVertexArray(0);
-// 		//unbind the shader
-// 		glUseProgram(0);
+		// Unbind the VAO
+		glBindVertexArray(0);
+		//unbind the shader
+		glUseProgram(0);
 
-// 		// render your GUI
-// 		ImGui::Begin("Demo window");
-// 		ImGui::Button("Hello!");
-// 		ImGui::End();
+		// render your GUI
+		ImGui::Begin("Demo window");
+		ImGui::Button("Hello!");
+		ImGui::End();
 
-// 		// Render ImGui
-// 		ImGui::Render();
-// 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		// Render ImGui
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-// 		// Swap front and back buffers
-// 		glfwSwapBuffers(window);
+		// Swap front and back buffers
+		glfwSwapBuffers(window);
 
-// 		// Poll for and process events
-// 		glfwPollEvents();
-// 	}
+		// Poll for and process events
+		glfwPollEvents();
+	}
 
-// 	// Destroy window and terminate GLFW
-// 	glfwDestroyWindow(window);
-// 	glfwTerminate();
+	// Destroy window and terminate GLFW
+	glfwDestroyWindow(window);
+	glfwTerminate();
 
-// 	ImGui_ImplOpenGL3_Shutdown();
-// 	ImGui_ImplGlfw_Shutdown();
-// 	ImGui::DestroyContext();
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 
-// }
+}
