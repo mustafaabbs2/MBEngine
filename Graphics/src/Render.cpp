@@ -1,96 +1,115 @@
-
-#define GLEW_STATIC
-#define QT 0
-#define IMGUI 1
+#include "ShaderUtils.hpp"
+#include "ImguiUtils.hpp"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <fstream>
 #include <iostream>
+#include <vector>
 
-
-#if QT
-#	include "QT\QtGUI.hpp"
-#endif
-
-#if IMGUI
-#	include "imgui\imgui.h"
-#	include "imgui\imgui_impl_glfw.h"
-#	include "imgui\imgui_impl_opengl3.h"
-#endif
-
-static void setupImGUI(GLFWwindow* window)
+void RenderBox()
 {
 
-	// Setup Dear ImGui context
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
-	// Setup Platform/Renderer bindings
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	std::vector<float> nodeCoordinates = {-1, -1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1,
+										  -1, -1, 1,  1, -1, 1,  1, 1, 1,  -1, 1, 1};
 
-	const char* glsl_version = "#version 330";
+	std::vector<float> offsets = {3, 6, 9, 12, 15, 18, 21, 24};
 
-	ImGui_ImplOpenGL3_Init(glsl_version);
-	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
-}
+	// Initialize GLFW and GLEW
 
-// Function to read the contents of a file into a string
-std::string readShaderFile(const char* filePath)
-{
-	std::ifstream file(filePath);
-	if(!file.is_open())
+	std::cout << nodeCoordinates.size();
+
+	// auto rearrangedvec = rearrangeCoordinates(nodeCoordinates);
+	// for(auto elem : rearrangedvec)
+	// 	std::cout << elem << " ";
+
+	if(!glfwInit())
 	{
-		std::cerr << "Failed to open file: " << filePath << std::endl;
-		return "";
+		std::cerr << "Failed to initialize GLFW\n";
+		return -1;
 	}
 
-	std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-	return content;
-}
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-const char* vertexSource = R"glsl(
-#version 330 core
-layout (location = 0) in vec3 aPos;
-
-void main() {
-    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-}
-)glsl";
-
-const char* fragmentSource = R"glsl(
-#version 330 core
-out vec4 FragColor;
-
-void main() {
-    FragColor = vec4(1.0, 0.5, 0.2, 1.0); // Orange color
-}
-
-)glsl";
-
-// Function to compile a shader
-GLuint compileShader(const char* shaderSource, GLenum shaderType)
-{
-	GLuint shader = glCreateShader(shaderType);
-	glShaderSource(shader, 1, &shaderSource, NULL);
-	glCompileShader(shader);
-
-	// Check for shader compilation errors
-	GLint success;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-	if(!success)
+	GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL Example", nullptr, nullptr);
+	if(!window)
 	{
-		char infoLog[512];
-		glGetShaderInfoLog(shader, 512, NULL, infoLog);
-		std::cerr << "Shader compilation failed:\n" << infoLog << std::endl;
-		return 0;
+		std::cerr << "Failed to create GLFW window\n";
+		glfwTerminate();
+		return -1;
 	}
 
-	return shader;
+	glfwMakeContextCurrent(window);
+
+	if(glewInit() != GLEW_OK)
+	{
+		std::cerr << "Failed to initialize GLEW\n";
+		return -1;
+	}
+
+	GLuint VAO, VBO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	glBufferData(GL_ARRAY_BUFFER,
+				 nodeCoordinates.size() * sizeof(float),
+				 nodeCoordinates.data(),
+				 GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
+	glCompileShader(vertexShader);
+
+	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
+	glCompileShader(fragmentShader);
+
+	// Create the shader program
+	GLuint shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
+
+	//do I need this? it's too small
+	float scale_factor = 20;
+	GLint scaleLocation = glGetUniformLocation(shaderProgram, "scale");
+	glUniform1f(scaleLocation, scale_factor);
+
+	glUseProgram(shaderProgram);
+
+	// Main rendering loop
+	while(!glfwWindowShouldClose(window))
+	{
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		for(size_t i = 0; i < offsets.size(); ++i)
+		{
+			glDrawArrays(GL_LINE_LOOP, offsets[i], offsets[i]);
+		}
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	// Clean up
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteProgram(shaderProgram);
+	glfwTerminate();
 }
 
-int main(int argc, char* argv[])
+
+
+
+
+void RenderWithGUI()
 {
 	// Initialize GLFW
 	if(!glfwInit())
@@ -236,5 +255,4 @@ int main(int argc, char* argv[])
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
-	return 0;
 }

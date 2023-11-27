@@ -3,7 +3,8 @@ project(Graphics)
 
 
 set(SOURCES
-    src/renderer.cpp
+    src/main.cpp
+    src/RenderBox.cpp
 )
 
 set(UI_SOURCES
@@ -41,7 +42,10 @@ include/
 src/
 )
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${UI_SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
+
+#add_executable(${PROJECT_NAME} ${SOURCES} ${UI_SOURCES})
+
 
 target_link_libraries(${PROJECT_NAME}
 ${OPENGL_LIBRARIES}

@@ -88,6 +88,8 @@
         "memory_resource": "cpp",
         "random": "cpp",
         "strstream": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "filesystem": "cpp",
+        "queue": "cpp"
     }
 }
