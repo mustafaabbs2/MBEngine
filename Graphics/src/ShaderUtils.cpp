@@ -20,6 +20,7 @@ std::string readShaderFile(const char* filePath)
 }
 
 
+
 // Function to compile a shader
 GLuint compileShader(const char* shaderSource, GLenum shaderType)
 {

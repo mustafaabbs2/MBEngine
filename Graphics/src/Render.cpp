@@ -1,6 +1,7 @@
 #include "Render.hpp"
 #include "ShaderUtils.hpp"
 #include "ImguiUtils.hpp"
+#include "WindowUtils.hpp"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
