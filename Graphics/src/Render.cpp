@@ -13,6 +13,8 @@ void Render(GLFWwindow* window, Shape shape, bool withGui = false)
 
 	std::vector<float> nodeCoordinates;
 	std::vector<int> offsets;
+	int skip;
+
 
 	if(shape == Shape::TRIANGLE)
 	{
@@ -38,6 +40,7 @@ void Render(GLFWwindow* window, Shape shape, bool withGui = false)
 
 		offsets = {3, 6};
 		writeObjFile(nodeCoordinates, offsets, "triangle.obj", true);
+		skip = 3;
 	}
 
 	if(shape == Shape::RECTANGLE)
@@ -46,6 +49,7 @@ void Render(GLFWwindow* window, Shape shape, bool withGui = false)
 						   -1, -1, 1,	1, -1, 1,  1, 1, 1,  -1, 1, 1};
 
 		offsets = {3, 6, 9, 12, 15, 18, 21, 24};
+		skip = 4;
 	}
 
 	if(shape == Shape::FACET)
@@ -88,17 +92,13 @@ void Render(GLFWwindow* window, Shape shape, bool withGui = false)
 					   nodeCoordinates.begin(),
 					   [](float x) { return x * (float)1000.0; });
 
-		// for(size_t i = 0; i < 300; i++)
-		// {
-		// 	std::cout << nodeCoordinates[i] << " ";
-		// }
-
 
 		offsets = {4,  8,  12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52,
 				   56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100};
 
-		writeObjFile(nodeCoordinates, offsets, "facet.obj", false);
-		//nf (4 1 2 3 4   4 5 6 7 8   4 9 10 11 12 ... )
+		writeObjFile(nodeCoordinates, offsets, "facet.obj", false);		
+		skip = 4;
+
 	}
 
 	if(withGui)
@@ -139,6 +139,7 @@ void Render(GLFWwindow* window, Shape shape, bool withGui = false)
 	GLint scaleLocation = glGetUniformLocation(shaderProgram, "scale");
 	glUseProgram(shaderProgram);
 
+
 	// Main rendering loop
 	while(!glfwWindowShouldClose(window))
 	{
@@ -167,6 +168,9 @@ void Render(GLFWwindow* window, Shape shape, bool withGui = false)
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		}
+
+		glBindVertexArray(0);
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
