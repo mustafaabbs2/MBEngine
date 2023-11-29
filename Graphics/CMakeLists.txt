@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 project(Graphics)
 
+set(HOOPS_COMPILE TRUE)
+
+if(HOOPS_COMPILE)
+	add_subdirectory(hoops)
+endif()
 
 set(SOURCES
     src/main.cpp
@@ -45,45 +50,4 @@ ${OPENGL_LIBRARIES}
 ${glfw_LIBRARIES}
 ${GLEW_LIBRARIES}
 )
-
-
-
-
-
-#Test for a HOOPS viewer
-
-set(HOOPS_COMPILE TRUE)
-
-if(HOOPS_COMPILE)
-
-	set(HOOPS_DEPENDENCIES_PATH "D:\\Mustafa\\hoops_3df2720_nt_x64_v141\\HOOPS_3DF_2720\\Dev_Tools")
-
-	set(HOOPS_SOURCES
-		src/HoopsRenderer.cpp
-	)
-
-	include_directories(
-		${HOOPS_DEPENDENCIES_PATH}/base_stream/source
-		${HOOPS_DEPENDENCIES_PATH}/base_stream/source/stream_common
-		${HOOPS_DEPENDENCIES_PATH}/hoops_3dgs/source
-		${HOOPS_DEPENDENCIES_PATH}/hoops_mvo/source
-		${HOOPS_DEPENDENCIES_PATH}/hoops_stream/source
-		${HOOPS_DEPENDENCIES_PATH}/utility/source
-	)
-
-
-	add_executable(HoopsRenderer ${HOOPS_SOURCES})
-
-
-
-	target_link_libraries(HoopsRenderer
-		${HOOPS_DEPENDENCIES_PATH}/hoops_3dgs/lib/nt_x64_v141/hoops.lib
-		${HOOPS_DEPENDENCIES_PATH}/hoops_mvo/lib/nt_x64_v141/hoops_mvo.lib
-		${HOOPS_DEPENDENCIES_PATH}/hoops_stream/lib/nt_x64_v141/hoops_stream.lib
-		${HOOPS_DEPENDENCIES_PATH}/utility/lib/nt_x64_v141/hoops_utilsstatd_mt.lib
-	)
-
-endif()
-
-
 
