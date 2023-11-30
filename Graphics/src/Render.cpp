@@ -8,13 +8,14 @@
 #include <iostream>
 #include <vector>
 
+#include <array>
+
 void Render(GLFWwindow* window, Shape shape, bool withGui = false)
 {
 
 	std::vector<float> nodeCoordinates;
 	std::vector<int> offsets;
 	int skip;
-
 
 	if(shape == Shape::TRIANGLE)
 	{
@@ -92,13 +93,45 @@ void Render(GLFWwindow* window, Shape shape, bool withGui = false)
 					   nodeCoordinates.begin(),
 					   [](float x) { return x * (float)1000.0; });
 
-
 		offsets = {4,  8,  12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52,
 				   56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100};
 
-		writeObjFile(nodeCoordinates, offsets, "facet.obj", false);		
-		skip = 4;
+		//construct 2d array for point coordinates
+		float pts[100][3];
 
+		int index = 0;
+
+		for(int i = 0; i < 100; ++i)
+		{
+			for(int j = 0; j < 3; ++j)
+			{
+				pts[i][j] = nodeCoordinates[index];
+				++index;
+			}
+		}
+
+		//construct faces vector
+
+		std::array<int, 125> faces;
+		int nindex = 0;
+
+		for (int i = 0; i < offsets.size(); ++i) {
+			int ncount = 4;
+			faces[i * 5] = ncount;
+
+			for (int j = 0; j < ncount; ++j) {
+				faces[i * 5 + 1 + j] = nindex + j;
+			}
+
+			nindex += ncount;
+		}
+
+
+		for(auto i = 0; i < faces.size(); i++)
+			std::cout << faces[i] << " ";
+
+		writeObjFile(nodeCoordinates, offsets, "facet.obj", false);
+		skip = 4;
 	}
 
 	if(withGui)
@@ -139,7 +172,6 @@ void Render(GLFWwindow* window, Shape shape, bool withGui = false)
 	GLint scaleLocation = glGetUniformLocation(shaderProgram, "scale");
 	glUseProgram(shaderProgram);
 
-
 	// Main rendering loop
 	while(!glfwWindowShouldClose(window))
 	{
@@ -157,11 +189,9 @@ void Render(GLFWwindow* window, Shape shape, bool withGui = false)
 			//gldrawelement array => needs connectivity
 
 			// glDrawElements(GL_QUADS, indices.size(), GL_UNSIGNED_INT, 0);
-
 		}
 
 		// glDrawArrays(GL_POINTS, 0, nodeCoordinates.size() / 3);
-
 
 		if(withGui)
 		{
