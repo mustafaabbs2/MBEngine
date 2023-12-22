@@ -16,7 +16,7 @@ echo "Installing Conan dependencies..."
 
 if [[ $1 == "Debug" ]]
 then
-    conan install ../conanfile.py --profile Darwin/conanprofile.txt -if ../build/Debug || exit $?
+    conan install ../conanfile.py --profile Darwin/conanprofile.txt -if ../build/Debug --build=missing|| exit $?
 else
-    conan install ../conanfile.py --profile Darwin/conanprofile.txt -if ../build/Release || exit $?
+    conan install ../conanfile.py --profile Darwin/conanprofile.txt -if ../build/Release --build=missing || exit $?
 fi
