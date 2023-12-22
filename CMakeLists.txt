@@ -30,5 +30,7 @@ if(PYTHON_ENABLED)
 add_subdirectory(SyntaxTree)
 endif()
 add_subdirectory(Tests)
+add_subdirectory(Benchmarks)
+
 
 
