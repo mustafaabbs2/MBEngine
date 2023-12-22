@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 project(Graphics)
 
-set(HOOPS_COMPILE TRUE)
+if(APPLE)
+	set(HOOPS_COMPILE FALSE)
+endif()
 
 if(HOOPS_COMPILE)
 	add_subdirectory(hoops)
