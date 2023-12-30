@@ -3,3 +3,5 @@ project(FlowSolver)
 
 
 add_subdirectory(Driver)
+add_subdirectory(LinearSolver)
+
