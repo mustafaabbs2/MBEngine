@@ -8,7 +8,8 @@ message("Configuring LinearSolver..")
 set(CMAKE_CXX_STANDARD 17)
 
 # Find OpenMP package
-find_package(OPENMP REQUIRED)
+find_package(OpenMP REQUIRED)
+
 
 set(CPP_SOURCES
     Jacobi.cpp
@@ -26,9 +27,13 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 # Enable OpenMP
 if(OpenMP_CXX_FOUND)
-    target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
+    # Set OpenMP flags
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+    include_directories("${OpenMP_CXX_INCLUDE_DIRS}")
+    target_link_libraries(${PROJECT_NAME}  PUBLIC OpenMP::OpenMP_CXX)
+else()
+    message(FATAL_ERROR "OpenMP not found. Please make sure to install it.")
 endif()
-
-
 
 
