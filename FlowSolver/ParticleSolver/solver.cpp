@@ -7,6 +7,8 @@ void hello_world()
 	std::cout << "Hello world\n";
 }
 
+// From https://www.cs.cmu.edu/~scoros/cs15467-s16/lectures/11-fluids2.pdf
+// 315/64 pi h^3 (h2 - r2) ^3
 double poly6Kernel(double r)
 {
 	if(r >= 0 && r <= h)
@@ -33,6 +35,24 @@ double wendlandKernel(double q) //q = x/h
 	}
 }
 
+// From https://www.gpusph.org/documentation/gpusph-theory.pdf
+
+double wendlandGradient(double q) //gradient assumed same in both dirs
+{
+	if(q >= 0 && q <= 2)
+	{
+		double coeff = -(5 * 21.0) / (16.0 * pi * std::pow(h, 5));
+		double factor = std::pow(1.0 - q / 2.0, 3) * q;
+		return coeff * factor;
+	}
+	else
+	{
+		return 0.0;
+	}
+}
+
+//need a gradient for pressure
+
 double distance(const Particle& p1, const Particle& p2)
 {
 	return std::sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
@@ -44,11 +64,12 @@ void runStep(std::vector<Particle>& particles)
 	{
 		//not sure?
 		p.vx += dt * p.fx / p.density;
-		p.vy += dt * (p.fy / p.density - g);
+		p.vy += dt * (p.fy / p.density - g); //add gravity here
 
 		p.x += dt * p.vx;
 		p.y += dt * p.vy;
 
+		//recalculate forces in the next step
 		p.fx = 0.0;
 		p.fy = 0.0;
 	}
@@ -73,9 +94,14 @@ double calculateDensity(const std::vector<Particle>& particles, const Particle& 
 	return density;
 }
 
-double calculatePressure(const Particle& p)
+double calculatePressureTait(const Particle& p)
 {
 	return c * c * rho0 * (std::pow(p.density / rho0, gamma) - 1.0) / gamma + p0;
+}
+
+double calculatePressureDefault(const Particle& p)
+{
+	return k * (p.density - rho0);
 }
 
 void calculatePressureForce(std::vector<Particle>& particles)
@@ -84,7 +110,7 @@ void calculatePressureForce(std::vector<Particle>& particles)
 	for(auto& p : particles)
 	{
 		double pressureForceX = 0.0, pressureForceY = 0.0;
-		double pi = calculatePressure(p);
+		double pi = calculatePressureTait(p);
 		double rhoi = p.density;
 
 		for(const auto& other : particles)
@@ -96,16 +122,16 @@ void calculatePressureForce(std::vector<Particle>& particles)
 				{
 					// double pressure = k * (p.density - rho0);
 					// use tait equation of state
-					double pj = calculatePressure(other);
+					double pj = calculatePressureTait(other);
 					double rhoj = other.density;
 
-					double w_press = wendlandKernel(r); //is this correct? I may need the gradient..
+					double w_press = wendlandGradient(r); //is this correct?
 
 					pressureForceX += other.mass * (pi / (rhoi * rhoi) + pj / (rhoj * rhoj)) *
-									  w_press * (p.x - other.x);
+									  w_press;
 
 					pressureForceY += other.mass * (pi / (rhoi * rhoi) + pj / (rhoj * rhoj)) *
-									  w_press * (p.y - other.y);
+									  w_press;
 				}
 			}
 		}

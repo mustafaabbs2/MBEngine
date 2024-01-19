@@ -24,7 +24,7 @@ int main()
 		p.density = rho0;
 	}
 
-	for(int step = 0; step < 1; ++step)
+	for(int step = 0; step < 2; ++step)
 	{
 		runStep(particles);
 	}

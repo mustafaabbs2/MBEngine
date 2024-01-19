@@ -24,9 +24,11 @@ const double delta = 0.00001;
 
 void hello_world();
 double poly6Kernel(double r);
+double wendlandGradient(double q);
 double distance(const Particle& p1, const Particle& p2);
 void runStep(std::vector<Particle>& particles);
 double calculateDensity(const std::vector<Particle>& particles, const Particle& p);
-double calculatePressure(const Particle& p);
+double calculatePressureTait(const Particle& p);
+double calculatePressureDefault(const Particle& p);
 void calculatePressureForce(std::vector<Particle>& particles);
 void writeParticleData(const std::vector<Particle>& particles, const std::string& filename);
