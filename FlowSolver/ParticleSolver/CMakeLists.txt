@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CPP_SOURCES
     pywrapper.cpp
     main.cpp
+    solver.cpp
 )
 
 # Add executable target
