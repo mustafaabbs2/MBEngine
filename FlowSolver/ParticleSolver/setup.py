@@ -1,6 +1,5 @@
 
 import numpy as np
-
 import sys
 
 # replace with path to lib

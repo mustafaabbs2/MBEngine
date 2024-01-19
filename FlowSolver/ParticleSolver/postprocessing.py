@@ -1,5 +1,6 @@
 import pyvista as pv
 from pyvista import examples
+import numpy as np
 
 
 def display_point_cloud():
