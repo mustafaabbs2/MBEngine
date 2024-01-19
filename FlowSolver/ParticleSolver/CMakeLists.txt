@@ -8,6 +8,7 @@ message("Configuring ParticleSolver..")
 set(CMAKE_CXX_STANDARD 17)
 
 set(CPP_SOURCES
+    pywrapper.cpp
     main.cpp
 )
 
@@ -20,6 +21,29 @@ ${CPP_SOURCES}
 target_include_directories(${PROJECT_NAME} PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
+find_package(pybind11 REQUIRED)
+find_package(Python COMPONENTS Interpreter Development)
+
+message("Python_FOUND:${Python_FOUND}")
+message("Python_VERSION:${Python_VERSION}")
+message("Python_Development_FOUND:${Python_Development_FOUND}")
+message("Python_LIBRARIES:${Python_LIBRARIES}")
+
+#add_subdirectory(pybind11)
+pybind11_add_module(particle_module
+${CPP_SOURCES}
+)
+
+# Add include directories
+
+target_include_directories(${PROJECT_NAME} PRIVATE 
+${pybind11_INCLUDE_DIRS}
+${Python3_INCLUDE_DIRS}
+)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC ${Python_LIBRARIES})
+
 
 if(WIN32)
     # Find OpenMP package
