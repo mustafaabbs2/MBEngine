@@ -2,10 +2,6 @@
 #include <fstream>
 #include <iostream>
 
-void hello_world()
-{
-	std::cout << "Hello world\n";
-}
 
 // From https://www.cs.cmu.edu/~scoros/cs15467-s16/lectures/11-fluids2.pdf
 // 315/64 pi h^3 (h2 - r2) ^3
@@ -21,6 +17,8 @@ double poly6Kernel(double r)
 		return 0.0;
 	}
 }
+
+// From https://www.gpusph.org/documentation/gpusph-theory.pdf
 
 double wendlandKernel(double q) //q = x/h
 {
@@ -51,8 +49,6 @@ double wendlandGradient(double q) //gradient assumed same in both dirs
 	}
 }
 
-//need a gradient for pressure
-
 double distance(const Particle& p1, const Particle& p2)
 {
 	return std::sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
@@ -62,7 +58,8 @@ void runStep(std::vector<Particle>& particles)
 {
 	for(auto& p : particles)
 	{
-		//not sure?
+
+		// From https://www.cs.cmu.edu/~scoros/cs15467-s16/lectures/11-fluids2.pdf
 		p.vx += dt * p.fx / p.density;
 		p.vy += dt * (p.fy / p.density - g); //add gravity here
 
@@ -127,11 +124,11 @@ void calculatePressureForce(std::vector<Particle>& particles)
 
 					double w_press = wendlandGradient(r); //is this correct?
 
-					pressureForceX += other.mass * (pi / (rhoi * rhoi) + pj / (rhoj * rhoj)) *
-									  w_press;
-
-					pressureForceY += other.mass * (pi / (rhoi * rhoi) + pj / (rhoj * rhoj)) *
-									  w_press;
+					//x and y formulations are the same, needs to change:
+					pressureForceX +=
+						other.mass * (pi / (rhoi * rhoi) + pj / (rhoj * rhoj)) * w_press;
+					pressureForceY +=
+						other.mass * (pi / (rhoi * rhoi) + pj / (rhoj * rhoj)) * w_press;
 				}
 			}
 		}
@@ -147,7 +144,9 @@ void writeParticleData(const std::vector<Particle>& particles, const std::string
 	if(outfile.is_open())
 	{
 		//header
-		outfile << "X"
+		outfile << "ID"
+				<< " "
+				<< "X"
 				<< " "
 				<< "Y"
 				<< " "
@@ -165,9 +164,9 @@ void writeParticleData(const std::vector<Particle>& particles, const std::string
 				<< "\n";
 		for(const auto& particle : particles)
 		{
-			outfile << particle.x << " " << particle.y << " " << particle.vx << " " << particle.vy
-					<< " " << particle.fx << " " << particle.fy << " " << particle.density << " "
-					<< particle.mass << "\n";
+			outfile << particle.id << " " << particle.x << " " << particle.y << " " << particle.vx
+					<< " " << particle.vy << " " << particle.fx << " " << particle.fy << " "
+					<< particle.density << " " << particle.mass << "\n";
 		}
 		outfile.close();
 	}

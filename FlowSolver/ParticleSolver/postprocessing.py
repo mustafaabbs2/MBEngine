@@ -1,6 +1,14 @@
 import pyvista as pv
 from pyvista import examples
 import numpy as np
+import sys
+
+# replace with path to lib
+sys.path.insert(
+    0,
+    "D:\\Mustafa\\MBEngine\\MBEngine\\build\\Release\\FlowSolver\\ParticleSolver\\Release",
+)
+import particle_module as pm
 
 
 def display_point_cloud():
@@ -59,3 +67,11 @@ def display_cube_mesh():
     p.add_mesh(cube, color="cyan", opacity=0.5)
     p.add_mesh(grid_mesh, color="gray", opacity=0.2, style="wireframe")
     p.show()
+
+
+def main():
+    a = pm.get_array()
+    print(a)
+
+
+main()

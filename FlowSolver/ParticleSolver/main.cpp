@@ -4,7 +4,7 @@
 
 int main()
 {
-	const int numParticles = 10;
+	const int numParticles = 1000;
 
 	std::vector<Particle> particles(numParticles);
 
@@ -12,9 +12,14 @@ int main()
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<double> distribution(0.0, 0.5);
 
+	double offset = 0;
+
+	size_t id = 0;
+
 	for(auto& p : particles)
 	{
-		p.x = distribution(gen);
+		p.id = id;
+		p.x = offset;
 		p.y = distribution(gen);
 		p.vx = 0.0;
 		p.vy = 0.0;
@@ -22,14 +27,16 @@ int main()
 		p.fy = 0.0;
 		p.mass = 0.001 / 2000;
 		p.density = rho0;
+
+		offset += 0.01;
+		id += 1;
 	}
 
-	for(int step = 0; step < 2; ++step)
+	for(int step = 0; step < 5; ++step)
 	{
 		runStep(particles);
+		writeParticleData(particles, "particle_data_step_" + std::to_string(step) + ".txt");
 	}
-
-	writeParticleData(particles, "particle_data.txt");
 
 	return 0;
 }

@@ -6,6 +6,7 @@
 
 struct Particle
 {
+	int id;
 	double x, y;
 	double vx, vy, fx, fy;
 	double density, mass;
@@ -22,7 +23,6 @@ const double p0 = 1.0; // reference pressure
 const double c = 10;
 const double delta = 0.00001;
 
-void hello_world();
 double poly6Kernel(double r);
 double wendlandGradient(double q);
 double distance(const Particle& p1, const Particle& p2);
