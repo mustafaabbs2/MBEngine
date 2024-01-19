@@ -33,19 +33,6 @@ double wendlandKernel(double q) //q = x/h
 	}
 }
 
-double spikyGradient(double r)
-{
-	if(r >= 0 && r <= h)
-	{
-		double coeff = -45.0 / (pi * std::pow(h, 6));
-		return coeff * std::pow(h - r, 2);
-	}
-	else
-	{
-		return 0.0;
-	}
-}
-
 double distance(const Particle& p1, const Particle& p2)
 {
 	return std::sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
@@ -55,6 +42,7 @@ void runStep(std::vector<Particle>& particles)
 {
 	for(auto& p : particles)
 	{
+		//not sure?
 		p.vx += dt * p.fx / p.density;
 		p.vy += dt * (p.fy / p.density - g);
 
@@ -111,7 +99,7 @@ void calculatePressureForce(std::vector<Particle>& particles)
 					double pj = calculatePressure(other);
 					double rhoj = other.density;
 
-					double w_press = wendlandKernel(r);
+					double w_press = wendlandKernel(r); //is this correct? I may need the gradient..
 
 					pressureForceX += other.mass * (pi / (rhoi * rhoi) + pj / (rhoj * rhoj)) *
 									  w_press * (p.x - other.x);
