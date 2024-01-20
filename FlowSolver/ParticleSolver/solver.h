@@ -24,7 +24,10 @@ const double c = 10;
 const double delta = 0.00001;
 
 double poly6Kernel(double r);
-double wendlandGradient(double q);
+double wendlandKernel3D(double q);
+double wendlandKernel2D(double q);
+double wendlandGradient3D(double q);
+double wendlandGradient2D(double q);
 double distance(const Particle& p1, const Particle& p2);
 void runStep(std::vector<Particle>& particles);
 double calculateDensity(const std::vector<Particle>& particles, const Particle& p);

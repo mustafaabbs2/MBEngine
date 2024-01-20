@@ -2,7 +2,6 @@
 #include <fstream>
 #include <iostream>
 
-
 // From https://www.cs.cmu.edu/~scoros/cs15467-s16/lectures/11-fluids2.pdf
 // 315/64 pi h^3 (h2 - r2) ^3
 double poly6Kernel(double r)
@@ -20,7 +19,7 @@ double poly6Kernel(double r)
 
 // From https://www.gpusph.org/documentation/gpusph-theory.pdf
 
-double wendlandKernel(double q) //q = x/h
+double wendlandKernel3D(double q) //q = x/h
 {
 	if(q >= 0 && q <= 2)
 	{
@@ -33,13 +32,40 @@ double wendlandKernel(double q) //q = x/h
 	}
 }
 
-// From https://www.gpusph.org/documentation/gpusph-theory.pdf
-
-double wendlandGradient(double q) //gradient assumed same in both dirs
+double wendlandKernel2D(double q) //q = x/h
 {
 	if(q >= 0 && q <= 2)
 	{
-		double coeff = -(5 * 21.0) / (16.0 * pi * std::pow(h, 5));
+		double coeff = 7.0 / (64.0 * pi * std::pow(h, 2));
+		return coeff * std::pow(2.0 - q, 4) * (1 + 2 * q);
+	}
+	else
+	{
+		return 0.0;
+	}
+}
+
+// From https://www.gpusph.org/documentation/gpusph-theory.pdf
+
+double wendlandGradient3D(double q) //gradient assumed same in both dirs
+{
+	if(q >= 0 && q <= 2)
+	{
+		double coeff = -(5 * 21.0) / (16.0 * pi * std::pow(h, 4));
+		double factor = std::pow(1.0 - q / 2.0, 3) * q;
+		return coeff * factor;
+	}
+	else
+	{
+		return 0.0;
+	}
+}
+
+double wendlandGradient2D(double q) //gradient assumed same in both dirs
+{
+	if(q >= 0 && q <= 2)
+	{
+		double coeff = -(5 * 7.0) / (16.0 * pi * std::pow(h, 3));
 		double factor = std::pow(1.0 - q / 2.0, 3) * q;
 		return coeff * factor;
 	}
@@ -86,7 +112,7 @@ double calculateDensity(const std::vector<Particle>& particles, const Particle& 
 	for(const auto& other : particles)
 	{
 		double r = distance(p, other);
-		density += other.mass * wendlandKernel(r);
+		density += other.mass * wendlandKernel2D(r);
 	}
 	return density;
 }
@@ -122,7 +148,7 @@ void calculatePressureForce(std::vector<Particle>& particles)
 					double pj = calculatePressureTait(other);
 					double rhoj = other.density;
 
-					double w_press = wendlandGradient(r); //is this correct?
+					double w_press = wendlandGradient2D(r); //is this correct?
 
 					//x and y formulations are the same, needs to change:
 					pressureForceX +=
