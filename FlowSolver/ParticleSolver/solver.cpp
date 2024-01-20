@@ -141,7 +141,7 @@ void calculatePressureForce(std::vector<Particle>& particles)
 			if(&p != &other)
 			{
 				double r = distance(p, other);
-				if(r > 0)
+				if(r > 0 && r < h)
 				{
 					// double pressure = k * (p.density - rho0);
 					// use tait equation of state
@@ -150,7 +150,7 @@ void calculatePressureForce(std::vector<Particle>& particles)
 
 					double w_press = wendlandGradient2D(r); //is this correct?
 
-					//x and y formulations are the same, needs to change:
+					//x and y formulations are the same, needs to change?:
 					pressureForceX +=
 						other.mass * (pi / (rhoi * rhoi) + pj / (rhoj * rhoj)) * w_press;
 					pressureForceY +=

@@ -2,71 +2,45 @@ import pyvista as pv
 from pyvista import examples
 import numpy as np
 import sys
+import pandas as pd
+import os
+from pyvistaqt import BackgroundPlotter
 
 # replace with path to lib
 sys.path.insert(
     0,
-    "D:\\Mustafa\\MBEngine\\MBEngine\\build\\Release\\FlowSolver\\ParticleSolver\\Release",
+    "D:\\Mustafa\\MBEngine\\MBEngine\\build\\Debug\\FlowSolver\\ParticleSolver\\Debug",
 )
+
 import particle_module as pm
 
+base_path = (
+    "D:\\Mustafa\\MBEngine\\MBEngine\\build\\Debug\\FlowSolver\\ParticleSolver\\Debug"
+)
 
-def display_point_cloud():
-    point_cloud = np.random.random((100, 3))
+file_name = "particle_data_step_4.txt"
+
+file_names = [
+    "particle_data_step_0.txt",
+    "particle_data_step_1.txt",
+    "particle_data_step_2.txt",
+    "particle_data_step_4.txt",
+]
+
+# bg_plotter = BackgroundPlotter()
+
+
+for file_name in file_names:
+    file_path = os.path.join(base_path, file_name)
+    df = pd.read_csv(file_path, delim_whitespace=True)
+    df["Z"] = 0
+    point_cloud = df[["X", "Y", "Z"]].values
     pdata = pv.PolyData(point_cloud)
-    pdata["orig_sphere"] = np.arange(100)
     sphere = pv.Sphere(radius=0.02, phi_resolution=10, theta_resolution=10)
     pc = pdata.glyph(scale=False, geom=sphere, orient=False)
     pc.plot(cmap="Reds")
 
-
-def display_point_cloud_animation():
-    num_frames = 5
-    point_cloud = np.random.random((100, 3))
-    pdata = pv.PolyData(point_cloud)
-    pdata["orig_sphere"] = np.arange(100)
-    sphere = pv.Sphere(radius=0.02, phi_resolution=10, theta_resolution=10)
-
-    # Create a plotter
-    p = pv.Plotter()
-
-    # Loop through frames and update the point cloud position
-    for i in range(num_frames):
-        pdata.points[:, 0] += 0.01  # Move the points in the x-direction
-        pc = pdata.glyph(scale=False, geom=sphere, orient=False)
-
-        # Clear the plotter for each frame
-        p.clear()
-
-        # Add the point cloud and frame number text to the plot
-        p.add_text(f"Frame: {i}", position="upper_left", font_size=18, color="black")
-
-        # Render the plot
-        p.render()
-
-    # Show the animation
-    p.show()
-
-
-def make_cube():
-    x = np.linspace(-0.5, 0.5, 25)
-    grid = pv.StructuredGrid(*np.meshgrid(x, x, x))
-    surf = grid.extract_surface().triangulate()
-    surf.flip_normals()
-    return surf
-
-
-def display_cube_mesh():
-    cube = make_cube()
-    # Create mesh grid for visualization
-    x = np.linspace(-0.5, 0.5, 25)
-    grid_mesh = pv.StructuredGrid(*np.meshgrid(x, x, x)).extract_surface().triangulate()
-    grid_mesh.flip_normals()
-
-    p = pv.Plotter()
-    p.add_mesh(cube, color="cyan", opacity=0.5)
-    p.add_mesh(grid_mesh, color="gray", opacity=0.2, style="wireframe")
-    p.show()
+    # bg_plotter.add_mesh(pc, cmap="Reds", show_scalar_bar=False)
 
 
 def main():
@@ -74,4 +48,4 @@ def main():
     print(a)
 
 
-main()
+# bg_plotter.show()

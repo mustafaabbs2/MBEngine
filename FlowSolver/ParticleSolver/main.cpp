@@ -4,7 +4,7 @@
 
 int main()
 {
-	const int numParticles = 1000;
+	const int numParticles = 10;
 
 	std::vector<Particle> particles(numParticles);
 
@@ -12,15 +12,15 @@ int main()
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<double> distribution(0.0, 0.5);
 
-	double offset = 0;
+	double offsetx = 0, offsety = 0;
 
 	size_t id = 0;
 
 	for(auto& p : particles)
 	{
 		p.id = id;
-		p.x = offset;
-		p.y = distribution(gen);
+		p.x = offsetx;
+		p.y = offsety;
 		p.vx = 0.0;
 		p.vy = 0.0;
 		p.fx = 0.0;
@@ -28,7 +28,9 @@ int main()
 		p.mass = 0.001 / 2000;
 		p.density = rho0;
 
-		offset += 0.01;
+		offsetx += 0.1;
+		offsety += 0.05;
+
 		id += 1;
 	}
 
