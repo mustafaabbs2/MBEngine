@@ -22,9 +22,9 @@ file_name = "particle_data_step_4.txt"
 
 file_names = [
     "particle_data_step_0.txt",
-    "particle_data_step_1.txt",
-    "particle_data_step_2.txt",
-    "particle_data_step_4.txt",
+    # "particle_data_step_1.txt",
+    # "particle_data_step_2.txt",
+    # "particle_data_step_4.txt",
 ]
 
 # bg_plotter = BackgroundPlotter()
@@ -35,6 +35,7 @@ for file_name in file_names:
     df = pd.read_csv(file_path, delim_whitespace=True)
     df["Z"] = 0
     point_cloud = df[["X", "Y", "Z"]].values
+    print(point_cloud.shape)
     pdata = pv.PolyData(point_cloud)
     sphere = pv.Sphere(radius=0.02, phi_resolution=10, theta_resolution=10)
     pc = pdata.glyph(scale=False, geom=sphere, orient=False)
