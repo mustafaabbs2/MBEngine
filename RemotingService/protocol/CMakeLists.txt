@@ -2,7 +2,7 @@ find_package(protobuf REQUIRED)
 find_package(gRPC REQUIRED)
 
 set(PROTO_FILES
-    protos/kvp.proto
+    protos/headprotocol.proto
 )
 
 add_library(protolib ${PROTO_FILES})
