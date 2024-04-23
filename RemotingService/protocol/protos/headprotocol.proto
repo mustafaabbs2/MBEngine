@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package HeadProtocol;
 
-//KVStore service
+// KVStore service
 service KVStore
 {
 	rpc Put(PutRequest) returns (PutReply) {}
@@ -25,8 +25,9 @@ message GetRequest { string key = 1; }
 // The response message containing the value for the requested key.
 message GetReply { string value = 1; }
 
+// Array transfer service
+service ArrayTransfer { rpc SendArray(FloatArray) returns (FloatArray); }
+// service ArrayTransfer { rpc SendArray(IntArray) returns (IntArray); }
 
-//Array transfer service
-service ArrayTransfer { rpc SendArray(LargeArray) returns (LargeArray); }
-
-message LargeArray { repeated int32 values = 1; }
+message IntArray { repeated int32 values = 1; }
+message FloatArray { repeated float values = 1; }

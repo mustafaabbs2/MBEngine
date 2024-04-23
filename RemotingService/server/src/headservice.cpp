@@ -41,8 +41,8 @@ class ArrayTransferServiceImpl final : public ArrayTransfer::Service
 {
 public:
 	grpc::Status SendArray(grpc::ServerContext* context,
-						   const LargeArray* request,
-						   LargeArray* response) override
+						   const FloatArray* request,
+						   FloatArray* response) override
 	{
 		*response = *request;
 		return grpc::Status::OK;
@@ -58,6 +58,12 @@ int main()
 	grpc::ServerBuilder builder;
 
 	builder.AddListeningPort("0.0.0.0:50051", grpc::InsecureServerCredentials());
+
+	//Maybe you need to do this in the server
+	builder.SetMaxSendMessageSize(1024 * 1024 * 50);
+	builder.SetMaxMessageSize(1024 * 1024 * 50);
+	builder.SetMaxReceiveMessageSize(1024 * 1024 * 50);
+
 	builder.RegisterService(&KVPService_);
 	builder.RegisterService(&ArrayService_);
 

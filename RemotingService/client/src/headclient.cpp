@@ -18,7 +18,8 @@ using HeadProtocol::PutRequest;
 
 //Array transfer
 using HeadProtocol::ArrayTransfer;
-using HeadProtocol::LargeArray;
+using HeadProtocol::FloatArray;
+using HeadProtocol::IntArray;
 
 class KVStoreClient
 {
@@ -78,11 +79,11 @@ public:
 		: stub_(ArrayTransfer::NewStub(channel))
 	{}
 
-	int64_t SendArray(const std::vector<int>& array)
+	int64_t SendArray(const std::vector<float>& array)
 	{
-		LargeArray request;
+		FloatArray request;
 		request.mutable_values()->CopyFrom({array.begin(), array.end()});
-		LargeArray response;
+		FloatArray response;
 		ClientContext context;
 		auto start = std::chrono::high_resolution_clock::now();
 		Status status = stub_->SendArray(&context, request, &response);
@@ -109,9 +110,13 @@ int main(int argc, char** argv)
 	// are created. This channel models a connection to an endpoint (in this case,
 	// localhost at port 50051). We indicate that the channel isn't authenticated
 	// (use of InsecureChannelCredentials()).
+	grpc::ChannelArguments channel_args;
+	auto max_receive_message_size = 1024 * 1024 * 50; //default is 4 MB -> set to 50 MB
+	channel_args.SetMaxSendMessageSize(max_receive_message_size);
+	channel_args.SetMaxReceiveMessageSize(max_receive_message_size);
 
-	std::shared_ptr<Channel> channel =
-		grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials());
+	std::shared_ptr<Channel> channel = grpc::CreateCustomChannel(
+		"localhost:50051", grpc::InsecureChannelCredentials(), channel_args);
 
 	//Client 1
 
@@ -137,7 +142,11 @@ int main(int argc, char** argv)
 	//Client 2
 
 	ArrayTransferClient ArrayClient(channel);
-	std::vector<int> array(1000000, 1);
+
+	// std::vector<float> array(256000, 1); //1 MB
+	// std::vector<float> array(4000000, 1);//4 million floats ->16 MB
+	std::vector<float> array(10000000, 1); //10 million floats -> 40 MB
+
 	int64_t duration = ArrayClient.SendArray(array);
 	std::cout << "gRPC: Time taken to send the very large array: " << duration << " milliseconds"
 			  << std::endl;
