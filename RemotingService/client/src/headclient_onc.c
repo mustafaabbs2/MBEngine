@@ -1,6 +1,14 @@
 #include <stdio.h>
 #include <rpc/rpc.h>
-#include "array_xdr.h"
+// #include "array_xdr.h"
+// #include "..\..\protocol\protos\headprotocol_onc.x"
+
+#define PROG_NUM 100001   // Define program number
+#define PROG_VERS 1       // Define program version
+
+struct array {
+    float arr_val[1000000];
+};
 
 int main(int argc, char **argv) {
     CLIENT *cl;
