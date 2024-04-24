@@ -13,8 +13,11 @@
 // This code is public domain.
 //
 
+//Note that this work is probably the most copy pasted code of all time?
+
 #include "math.h"
 #include "stdio.h"
+#include "iostream"
 
 //Originally with GLUT
 #include <GL/glew.h>
@@ -175,20 +178,19 @@ int main()
 
 GLvoid vPrintHelp()
 {
-	printf("Marching Cubes Example by Cory Bloyd (dejaspaminacan@my-deja.com)\n\n");
+	printf("Marching Cubes Example by Mustafa, based on Cory Boyd\n\n");
 	printf("+/-  increase/decrease sample density\n");
-	printf("PageUp/PageDown  increase/decrease surface value\n");
+	printf("z,x  increase/decrease surface value\n");
 	printf("s  change sample function\n");
 	printf("c  toggle marching cubes / marching tetrahedrons\n");
 	printf("w  wireframe on/off\n");
 	printf("l  toggle lighting / color-by-normal\n");
 	printf("Home  spin scene on/off\n");
-	printf("End  source point animation on/off\n");
+	printf("End source point animation on/off\n");
 }
 
 void vResize(GLFWwindow* window, int width, int height)
 {
-
 	auto iWidth = width;
 	auto iHeight = height;
 	glViewport(0, 0, iWidth, iHeight);
@@ -223,7 +225,7 @@ void vKeyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	switch(key)
 	{
-	case GLFW_KEY_W:
+	case GLFW_KEY_W: // Toggle wireframe mode
 		ePolygonMode = (ePolygonMode == GL_LINE) ? GL_FILL : GL_LINE;
 		glPolygonMode(GL_FRONT_AND_BACK, ePolygonMode);
 		break;
@@ -250,12 +252,26 @@ void vKeyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
 		else
 			fSample = fSample1;
 		break;
+
 	case GLFW_KEY_L:
 		if(bLight)
 			glDisable(GL_LIGHTING);
 		else
 			glEnable(GL_LIGHTING);
 		bLight = !bLight;
+		break;
+
+
+	case GLFW_KEY_Z:
+		//Add code here to handle the increase in surface value
+		std::cout<<"Increase surface value"<<std::endl;
+
+
+		break;
+	case GLFW_KEY_X:
+		// Decrease surface value
+		// Add code here to handle the decrease in surface value
+
 		break;
 	}
 }
@@ -314,7 +330,8 @@ void vDrawScene(GLFWwindow* window)
 	glPushAttrib(GL_LIGHTING_BIT);
 	glDisable(GL_LIGHTING);
 	glColor3f(1.0, 1.0, 1.0);
-	// Assuming vMarchingCubes() function implementation
+	glBegin(GL_TRIANGLES);
+	vMarchingCubes();
 	glPopAttrib();
 
 	glPopMatrix();
