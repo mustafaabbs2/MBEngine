@@ -53,3 +53,16 @@ ${glfw_LIBRARIES}
 ${GLEW_LIBRARIES}
 )
 
+#MarchingCubes...
+
+set(MCUBE_SOURCES
+    src/MarchingCubes.cpp
+)
+
+add_executable(MarchingCubes ${MCUBE_SOURCES})
+
+target_link_libraries(MarchingCubes
+${OPENGL_LIBRARIES}
+${glfw_LIBRARIES}
+${GLEW_LIBRARIES}
+)
