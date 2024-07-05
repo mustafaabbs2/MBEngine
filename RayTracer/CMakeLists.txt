@@ -30,7 +30,10 @@ set(CUDA_SOURCES
     src/Cuda/RayKernel.cxx
 )
 
+
+
 set_source_files_properties(${CUDA_SOURCES} PROPERTIES LANGUAGE CUDA)
+
 
 # Add executable target
 add_executable(RayTracer 
@@ -70,6 +73,47 @@ include/)
 target_link_libraries(RayTracer 
 ${CUDA_LIBRARIES}
 PNG::PNG)
+
+
+#Make the optix stuff work
+
+set(OPTIX_SOURCES
+    src/Optix/main.cu
+)
+
+
+#make it find optix
+
+set(OptiX_INSTALL_DIR "C:/ProgramData/NVIDIA Corporation/OptiX SDK 8.0.0")
+list(APPEND CMAKE_MODULE_PATH "${OptiX_INSTALL_DIR}/SDK/CMake")
+find_package(OptiX REQUIRED)
+
+set_source_files_properties(${OPTIX_SOURCES} PROPERTIES LANGUAGE CUDA)
+
+include_directories(${OptiX_INSTALL_DIR}/include)
+
+add_executable(OptixRayTracer 
+${OPTIX_SOURCES}
+)
+
+
+message("OptiX_INCLUDE is: ${OptiX_INCLUDE}")
+
+
+#set_source_files_properties(${OPTIX_SOURCES} PROPERTIES CUDA_PTX_COMPILATION ON)
+#set_source_files_properties(${OPTIX_SOURCES}  PROPERTIES COMPILE_FLAGS "--keep -rdc=true")
+
+
+# Add include directories
+target_include_directories(OptixRayTracer PRIVATE 
+${PNG_INCLUDE_DIR}
+${CUDA_INCLUDE_DIRS}
+${OptiX_INCLUDE}
+include/)
+
+target_link_libraries(OptixRayTracer 
+${CUDA_LIBRARIES})
+
 
 
 
