@@ -81,7 +81,7 @@ set(OPTIX_SOURCES
     src/Optix/main.cu
 )
 
-
+##The Optix Project...............................................
 #make it find optix
 
 set(OptiX_INSTALL_DIR "C:/ProgramData/NVIDIA Corporation/OptiX SDK 8.0.0")
@@ -115,5 +115,35 @@ target_link_libraries(OptixRayTracer
 ${CUDA_LIBRARIES})
 
 
+##The OSPray Project...............................................
+
+# Set the path to OSPray's cmake config file
+set(OSPRAY_DIR "C:/Program Files/Intel/OSPRay v3/lib/cmake/ospray-3.1.0" CACHE PATH "Path to OSPray config")
+
+# Use find_package to locate OSPray
+find_package(ospray 3.1.0 REQUIRED CONFIG PATHS ${OSPRAY_DIR})
+
+
+set(OSPRAY_SOURCES
+    src/OSPRay/main.cpp
+)
+
+# Set the path to OSPRay's bin directory
+set(OSPRAY_BIN_DIR "C:/Program Files/Intel/OSPRay v3/bin" CACHE PATH "Path to OSPRay bin directory")
+
+add_executable(OSPRayTracer 
+${OSPRAY_SOURCES}
+)
+
+# Add the bin directory to the PATH environment variable for the executable
+if(WIN32)
+    set_target_properties(OSPRayTracer PROPERTIES
+        VS_DEBUGGER_ENVIRONMENT "PATH=${OSPRAY_BIN_DIR};$ENV{PATH}"
+    )
+endif()
+
+
+
+target_link_libraries(OSPRayTracer ospray::ospray)
 
 
