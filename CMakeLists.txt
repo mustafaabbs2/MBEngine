@@ -22,7 +22,7 @@ add_subdirectory(ChatService)
 if(CUDA_ENABLED)
 add_subdirectory(RayTracer)
 endif()
-add_subdirectory(FlowSolver)
+#add_subdirectory(FlowSolver) #python error 
 #add_subdirectory(SyntaxTree) #I think there's a pybind error
 add_subdirectory(Tests)
 add_subdirectory(Benchmarks)
