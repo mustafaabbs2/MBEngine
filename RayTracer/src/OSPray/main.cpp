@@ -22,6 +22,10 @@
 #	include <alloca.h>
 #endif
 #include "ospray/ospray_util.h"
+#include <GLFW/glfw3.h>
+#include <iostream>
+#include <ospray/ospray.h>
+#include <ospray/ospray_cpp.h>
 
 // helper function to write the rendered image as PPM file
 void writePPM(const char* fileName, int size_x, int size_y, const uint32_t* pixel)
@@ -49,11 +53,38 @@ void writePPM(const char* fileName, int size_x, int size_y, const uint32_t* pixe
 	fclose(file);
 }
 
+const int windowWidth = 800;
+const int windowHeight = 600;
+
+void errorCallback(int error, const char* description)
+{
+	std::cerr << "GLFW Error: " << description << std::endl;
+}
+
 int main(int argc, const char** argv)
 {
 	// image size
 	int imgSize_x = 1024; // width
 	int imgSize_y = 768; // height
+
+	// Initialize GLFW
+	if(!glfwInit())
+	{
+		fprintf(stderr, "Failed to initialize GLFW\n");
+		return -1;
+	}
+
+	glfwSetErrorCallback(errorCallback);
+
+	GLFWwindow* window = glfwCreateWindow(imgSize_x, imgSize_y, "OSPRay GLFW Example", NULL, NULL);
+	if(!window)
+	{
+		glfwTerminate();
+		return -1;
+	}
+
+	// Make the window's context current
+	glfwMakeContextCurrent(window);
 
 	// camera
 	float cam_pos[] = {0.f, 0.f, 0.f};
@@ -96,7 +127,12 @@ int main(int argc, const char** argv)
 	// e.g. "--osp:debug"
 	OSPError init_error = ospInit(&argc, argv);
 	if(init_error != OSP_NO_ERROR)
+	{
+		glfwTerminate(); //also terminate glfw
 		return init_error;
+	}
+
+	// Setup camera, scene, renderer, etc for the ppm
 
 	printf("done\n");
 	printf("setting up camera...");
@@ -196,6 +232,25 @@ int main(int argc, const char** argv)
 		imgSize_x, imgSize_y, OSP_FB_SRGBA, OSP_FB_COLOR | /*OSP_FB_DEPTH |*/ OSP_FB_ACCUM);
 	ospResetAccumulation(framebuffer);
 
+	// Main render loop
+	while(!glfwWindowShouldClose(window))
+	{
+		// Clear the framebuffer
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		// Render OSPRay frame
+		ospRenderFrameBlocking(framebuffer, renderer, camera, world);
+
+		// Access framebuffer and update GLFW window
+		const uint32_t* fb = (const uint32_t*)ospMapFrameBuffer(framebuffer, OSP_FB_COLOR);
+		glDrawPixels(imgSize_x, imgSize_y, GL_RGBA, GL_UNSIGNED_BYTE, fb);
+		ospUnmapFrameBuffer(fb, framebuffer);
+
+		// Swap buffers and poll for events
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
 	printf("rendering initial frame to firstFrame.ppm...");
 
 	// render one frame
@@ -243,6 +298,8 @@ int main(int argc, const char** argv)
 	printf("done\n");
 
 	ospShutdown();
+
+	glfwTerminate();
 
 #ifdef _WIN32
 	if(waitForKey)

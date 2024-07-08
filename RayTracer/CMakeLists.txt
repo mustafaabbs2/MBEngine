@@ -122,6 +122,11 @@ set(OSPRAY_DIR "C:/Program Files/Intel/OSPRay v3/lib/cmake/ospray-3.1.0" CACHE P
 
 # Use find_package to locate OSPray
 find_package(ospray 3.1.0 REQUIRED CONFIG PATHS ${OSPRAY_DIR})
+find_package(glfw3)
+
+include_directories(
+${glfw_INCLUDE_DIRS}
+)
 
 
 set(OSPRAY_SOURCES
@@ -143,7 +148,6 @@ if(WIN32)
 endif()
 
 
-
-target_link_libraries(OSPRayTracer ospray::ospray)
+target_link_libraries(OSPRayTracer ospray::ospray ${glfw_LIBRARIES})
 
 
