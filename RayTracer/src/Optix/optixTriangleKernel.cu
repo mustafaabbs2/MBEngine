@@ -3,8 +3,6 @@
 #include "optixTriangle.h"
 #include <cuda/helpers.h>
 
-#include <sutil/vec_math.h>
-
 extern "C"
 {
 	__constant__ Params params;
