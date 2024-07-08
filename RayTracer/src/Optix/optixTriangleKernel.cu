@@ -26,7 +26,8 @@ computeRay(uint3 idx, uint3 dim, float3& origin, float3& direction)
 					 1.0f;
 
 	origin = params.cam_eye;
-	direction = normalize(d.x * U + d.y * V + W);
+	// direction = normalize(d.x * U + d.y * V + W);
+	direction = d.x * U + d.y * V + W;
 }
 
 extern "C" __global__ void __raygen__rg()
