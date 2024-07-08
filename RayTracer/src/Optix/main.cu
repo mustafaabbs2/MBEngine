@@ -7,6 +7,8 @@
 #include <sstream>
 #include <stdexcept>
 
+#include "optixTriangle.h"
+
 #define CUDA_CHECK(call) cudaCheck(call, #call, __FILE__, __LINE__)
 #define OPTIX_CHECK(call) optixCheck(call, #call, __FILE__, __LINE__)
 
@@ -31,8 +33,23 @@ inline void optixCheck(OptixResult res, const char* call, const char* file, unsi
 	}
 }
 
+template <typename T>
+struct SbtRecord
+{
+	__align__(OPTIX_SBT_RECORD_ALIGNMENT) char header[OPTIX_SBT_RECORD_HEADER_SIZE];
+	T data;
+};
+
+typedef SbtRecord<RayGenData> RayGenSbtRecord;
+typedef SbtRecord<MissData> MissSbtRecord;
+typedef SbtRecord<HitGroupData> HitGroupSbtRecord;
+
 int main()
 {
+
+	int width = 1024;
+	int height = 768;
+
 	// Initialize CUDA
 	CUcontext cuCtx = 0; // zero means take the current context
 
@@ -213,6 +230,125 @@ int main()
 								&sizeof_log,
 								&hitgroup_prog_group);
 	}
+
+	//
+	// Link pipeline
+	//
+	OptixPipeline pipeline = nullptr;
+	{
+		const uint32_t max_trace_depth = 1;
+		OptixProgramGroup program_groups[] = {
+			raygen_prog_group, miss_prog_group, hitgroup_prog_group};
+
+		char log[2048];
+		size_t sizeof_log = sizeof(log);
+
+		OptixPipelineLinkOptions pipeline_link_options = {};
+		pipeline_link_options.maxTraceDepth = max_trace_depth;
+		optixPipelineCreate(context,
+							&pipeline_compile_options,
+							&pipeline_link_options,
+							program_groups,
+							sizeof(program_groups) / sizeof(program_groups[0]),
+							log,
+							&sizeof_log,
+							&pipeline);
+	}
+
+	//
+	// Set up shader binding table
+	//
+	OptixShaderBindingTable sbt = {};
+	{
+		CUdeviceptr raygen_record;
+		const size_t raygen_record_size = sizeof(RayGenSbtRecord);
+		CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&raygen_record), raygen_record_size));
+		RayGenSbtRecord rg_sbt;
+		OPTIX_CHECK(optixSbtRecordPackHeader(raygen_prog_group, &rg_sbt));
+		CUDA_CHECK(cudaMemcpy(reinterpret_cast<void*>(raygen_record),
+							  &rg_sbt,
+							  raygen_record_size,
+							  cudaMemcpyHostToDevice));
+
+		CUdeviceptr miss_record;
+		size_t miss_record_size = sizeof(MissSbtRecord);
+		CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&miss_record), miss_record_size));
+		MissSbtRecord ms_sbt;
+		ms_sbt.data = {0.3f, 0.1f, 0.2f};
+		OPTIX_CHECK(optixSbtRecordPackHeader(miss_prog_group, &ms_sbt));
+		CUDA_CHECK(cudaMemcpy(reinterpret_cast<void*>(miss_record),
+							  &ms_sbt,
+							  miss_record_size,
+							  cudaMemcpyHostToDevice));
+
+		CUdeviceptr hitgroup_record;
+		size_t hitgroup_record_size = sizeof(HitGroupSbtRecord);
+		CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&hitgroup_record), hitgroup_record_size));
+		HitGroupSbtRecord hg_sbt;
+		OPTIX_CHECK(optixSbtRecordPackHeader(hitgroup_prog_group, &hg_sbt));
+		CUDA_CHECK(cudaMemcpy(reinterpret_cast<void*>(hitgroup_record),
+							  &hg_sbt,
+							  hitgroup_record_size,
+							  cudaMemcpyHostToDevice));
+
+		sbt.raygenRecord = raygen_record;
+		sbt.missRecordBase = miss_record;
+		sbt.missRecordStrideInBytes = sizeof(MissSbtRecord);
+		sbt.missRecordCount = 1;
+		sbt.hitgroupRecordBase = hitgroup_record;
+		sbt.hitgroupRecordStrideInBytes = sizeof(HitGroupSbtRecord);
+		sbt.hitgroupRecordCount = 1;
+	}
+
+	uchar4* d_output_buffer;
+	size_t buffer_size = width * height * sizeof(uchar4);
+
+	// Allocate device memory for output buffer
+	CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_output_buffer), buffer_size));
+
+	// launch and get back results
+
+	CUstream stream;
+	CUDA_CHECK(cudaStreamCreate(&stream));
+
+	Params params;
+	params.image = d_output_buffer;
+	params.image_width = width;
+	params.image_height = height;
+	params.handle = gas_handle;
+
+	params.cam_u = make_float3(1.0f, 0.0f, 0.0f); // Example: X axis
+	params.cam_v = make_float3(0.0f, 1.0f, 0.0f); // Example: Y axis
+	params.cam_w =
+		make_float3(0.0f, 0.0f, -1.0f); // Example: -Z axis (assuming camera looks along -Z)
+	params.cam_eye = make_float3(0.0f, 0.0f, 1.0f); // Example: Camera position at (0, 0, 1)
+
+	CUdeviceptr d_param;
+	CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_param), sizeof(Params)));
+	CUDA_CHECK(cudaMemcpy(
+		reinterpret_cast<void*>(d_param), &params, sizeof(params), cudaMemcpyHostToDevice));
+
+	OPTIX_CHECK(
+		optixLaunch(pipeline, stream, d_param, sizeof(Params), &sbt, width, height, /*depth=*/1));
+
+	CUDA_CHECK(cudaFree(reinterpret_cast<void*>(d_param)));
+
+	// Copy results back from device to host if needed
+	uchar4* h_output_buffer = new uchar4[width * height];
+	CUDA_CHECK(cudaMemcpy(h_output_buffer, d_output_buffer, buffer_size, cudaMemcpyDeviceToHost));
+
+	// Process or save the output as needed
+
+	// Free device memory for output buffer
+	CUDA_CHECK(cudaFree(d_output_buffer));
+
+	//display buffer in glfw/image
+
+	//delete
+	delete[] h_output_buffer;
+
+	// Destroy CUDA stream
+	CUDA_CHECK(cudaStreamDestroy(stream));
 
 	optixDeviceContextDestroy(context);
 
