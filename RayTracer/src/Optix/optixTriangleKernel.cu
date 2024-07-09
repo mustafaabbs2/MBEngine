@@ -105,6 +105,11 @@ __host__ __device__ inline void operator+=(float3& a, const float3& b)
 /** subtract 
 * @{
 */
+__host__ __device__ float2 operator-(const float2& a, const float2& b)
+{
+	return make_float2(a.x - b.x, a.y - b.y);
+}
+
 __host__ __device__ inline float3 operator-(const float3& a, const float3& b)
 {
 	return make_float3(a.x - b.x, a.y - b.y, a.z - b.z);
@@ -250,8 +255,8 @@ computeRay(uint3 idx, uint3 dim, float3& origin, float3& direction)
 	const float3 U = params.cam_u;
 	const float3 V = params.cam_v;
 	const float3 W = params.cam_w;
-	const float2 d = make_float2(static_cast<float>(idx.x) / static_cast<float>(dim.x),
-								 static_cast<float>(idx.y) / static_cast<float>(dim.y));
+	const float2 d = 2 * make_float2(static_cast<float>(idx.x) / static_cast<float>(dim.x),
+								 static_cast<float>(idx.y) / static_cast<float>(dim.y)) - make_float2(1.0f, 1.0f);
 
 	origin = params.cam_eye;
 	direction = normalize(d.x * U + d.y * V + W);
