@@ -390,12 +390,12 @@ int main()
 	params.image_width = width;
 	params.image_height = height;
 	params.handle = gas_handle;
-
-	params.cam_u = make_float3(1.0f, 0.0f, 0.0f); // Example: X axis
-	params.cam_v = make_float3(0.0f, 1.0f, 0.0f); // Example: Y axis
+	//pulled the values from the SDK example
+	params.cam_u = make_float3(1.10456955f, 0.0f, 0.0f); // Example: X axis
+	params.cam_v = make_float3(0.0f, 0.828427136f, 0.0f); // Example: Y axis
 	params.cam_w =
-		make_float3(0.0f, 0.0f, -1.0f); // Example: -Z axis (assuming camera looks along -Z)
-	params.cam_eye = make_float3(0.0f, 0.0f, 1.0f); // Example: Camera position at (0, 0, 1)
+		make_float3(0.0f, 0.0f, -4.00000000f); // Example: -Z axis (assuming camera looks along -Z)
+	params.cam_eye = make_float3(0.0f, 0.0f, 2.00000000f); // Example: Camera position at (0, 0, 1)
 
 	CUdeviceptr d_param;
 	CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_param), sizeof(Params)));

@@ -14,32 +14,6 @@ static __forceinline__ __device__ void setPayload(float3 p)
 	optixSetPayload_2(__float_as_uint(p.z));
 }
 
-//color helpers
-__forceinline__ __device__ float3 toSRGB(const float3& c)
-{
-	float invGamma = 1.0f / 2.4f;
-	float3 powed = make_float3(powf(c.x, invGamma), powf(c.y, invGamma), powf(c.z, invGamma));
-	return make_float3(c.x < 0.0031308f ? 12.92f * c.x : 1.055f * powed.x - 0.055f,
-					   c.y < 0.0031308f ? 12.92f * c.y : 1.055f * powed.y - 0.055f,
-					   c.z < 0.0031308f ? 12.92f * c.z : 1.055f * powed.z - 0.055f);
-}
-
-// __forceinline__ __device__ float clamp(const float f, const float a, const float b)
-// {
-// 	return fmaxf(a, fminf(f, b));
-// }
-
-// __forceinline__ __device__ unsigned char quantizeUnsigned8Bits(float x)
-// {
-// 	x = clamp(x, 0.0f, 1.0f);
-// 	enum
-// 	{
-// 		N = (1 << 8) - 1,
-// 		Np1 = (1 << 8)
-// 	};
-// 	return (unsigned char)min((unsigned int)(x * (float)Np1), (unsigned int)N);
-// }
-
 __host__ __device__ float3 make_float3(const float2& a)
 {
 	return make_float3(a.x, a.y, 0.0f);
@@ -212,12 +186,57 @@ __host__ __device__ inline void operator/=(float3& a, const float s)
 	a *= inv;
 }
 
+//vector operations
+__host__ __device__ float dot(const float3& a, const float3& b)
+{
+	return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+__host__ __device__ float3 normalize(const float3& v)
+{
+	float invLen = 1.0f / sqrtf(dot(v, v));
+	return v * invLen;
+}
+
+//color helpers
+__forceinline__ __device__ float3 toSRGB(const float3& c)
+{
+	float invGamma = 1.0f / 2.4f;
+	float3 powed = make_float3(powf(c.x, invGamma), powf(c.y, invGamma), powf(c.z, invGamma));
+	return make_float3(c.x < 0.0031308f ? 12.92f * c.x : 1.055f * powed.x - 0.055f,
+					   c.y < 0.0031308f ? 12.92f * c.y : 1.055f * powed.y - 0.055f,
+					   c.z < 0.0031308f ? 12.92f * c.z : 1.055f * powed.z - 0.055f);
+}
+
+__forceinline__ __device__ float clamp(const float f, const float a, const float b)
+{
+	return fmaxf(a, fminf(f, b));
+}
+
+__forceinline__ __device__ float3 clamp(const float3& v, const float a, const float b)
+{
+	return make_float3(clamp(v.x, a, b), clamp(v.y, a, b), clamp(v.z, a, b));
+}
+
+__forceinline__ __device__ unsigned char quantizeUnsigned8Bits(float x)
+{
+	x = clamp(x, 0.0f, 1.0f);
+	enum
+	{
+		N = (1 << 8) - 1,
+		Np1 = (1 << 8)
+	};
+	return (unsigned char)min((unsigned int)(x * (float)Np1), (unsigned int)N);
+}
+
 __forceinline__ __device__ uchar4 make_color(const float3& c)
 {
 	// first apply gamma, then convert to unsigned char
-	float3 srgb = toSRGB(c);
-	return make_uchar4(
-		(unsigned char)(srgb.x), (unsigned char)(srgb.y), (unsigned char)(srgb.z), 255u);
+	float3 srgb = toSRGB(clamp(c, 0.0f, 1.0f));
+	return make_uchar4(quantizeUnsigned8Bits(srgb.x),
+					   quantizeUnsigned8Bits(srgb.y),
+					   quantizeUnsigned8Bits(srgb.z),
+					   255u);
 }
 
 __forceinline__ __device__ uchar4 make_color(const float4& c)
@@ -235,8 +254,7 @@ computeRay(uint3 idx, uint3 dim, float3& origin, float3& direction)
 								 static_cast<float>(idx.y) / static_cast<float>(dim.y));
 
 	origin = params.cam_eye;
-	// direction = normalize(d.x * U + d.y * V + W);
-	direction = d.x * U + d.y * V + W;
+	direction = normalize(d.x * U + d.y * V + W);
 }
 
 extern "C" __global__ void __raygen__rg()
@@ -277,8 +295,8 @@ extern "C" __global__ void __raygen__rg()
 
 extern "C" __global__ void __miss__ms()
 {
-	// MissData* miss_data = reinterpret_cast<MissData*>(optixGetSbtDataPointer());
-	// setPayload(miss_data->bg_color);
+	MissData* miss_data = reinterpret_cast<MissData*>(optixGetSbtDataPointer());
+	setPayload(miss_data->bg_color);
 }
 
 extern "C" __global__ void __closesthit__ch()
