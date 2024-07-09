@@ -1,13 +1,16 @@
+#include "optixTriangle.h"
 #include <array>
 #include <cuda_runtime.h>
+#include <fstream>
+#include <iomanip>
 #include <iostream>
+#include <memory>
 #include <optix.h>
 #include <optix_function_table_definition.h>
 #include <optix_stubs.h>
 #include <sstream>
 #include <stdexcept>
-
-#include "optixTriangle.h"
+#include <vector>
 
 #define CUDA_CHECK(call) cudaCheck(call, #call, __FILE__, __LINE__)
 #define OPTIX_CHECK(call) optixCheck(call, #call, __FILE__, __LINE__)

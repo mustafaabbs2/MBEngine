@@ -44,8 +44,18 @@ ${CUDA_SOURCES}
 find_package(PNG REQUIRED)
 include_directories(${PNG_INCLUDE_DIR})
 
-find_package(CUDA REQUIRED)
+#note: find package for CUDA is probably not required anymore
+#find_package(CUDA 11.6 REQUIRED)
 include_directories(${CUDA_INCLUDE_DIRS})
+
+# Print the CMAKE_CUDA_COMPILER variable
+message(STATUS "CMAKE_CUDA_COMPILER: ${CMAKE_CUDA_COMPILER}")
+
+# Print the CUDA_TOOLKIT_ROOT_DIR variable
+message(STATUS "CUDA_TOOLKIT_ROOT_DIR: ${CUDA_TOOLKIT_ROOT_DIR}")
+
+#forcing it for now
+set(CMAKE_CUDA_COMPILER "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.6/bin/nvcc.exe")
 
 
 set(CMAKE_CUDA_RUNTIME_LIBRARY Static)
@@ -122,7 +132,8 @@ foreach(SHADER_SOURCE ${SHADER_SOURCES})
     get_filename_component(FILE_NAME ${SHADER_SOURCE} NAME_WE)
     set(PTX_FILE "${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.ptx")
     set(SHADER_SOURCE "${CMAKE_SOURCE_DIR}/RayTracer/src/Optix/${FILE_NAME}.cu")
-
+    message(${CMAKE_CUDA_COMPILER})
+    
     add_custom_command(
         OUTPUT ${PTX_FILE}
         COMMAND ${CMAKE_CUDA_COMPILER} 

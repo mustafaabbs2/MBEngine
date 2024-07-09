@@ -1,3 +1,5 @@
+#include <optix.h>
+
 struct Params
 {
 	uchar4* image;
