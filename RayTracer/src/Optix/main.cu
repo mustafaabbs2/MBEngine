@@ -1,4 +1,5 @@
 #include "optixTriangle.h"
+#include <GLFW/glfw3.h>
 #include <array>
 #include <cuda_runtime.h>
 #include <fstream>
@@ -14,6 +15,36 @@
 
 #define CUDA_CHECK(call) cudaCheck(call, #call, __FILE__, __LINE__)
 #define OPTIX_CHECK(call) optixCheck(call, #call, __FILE__, __LINE__)
+
+void errorCallback(int error, const char* description)
+{
+	std::cerr << "GLFW Error: " << description << std::endl;
+}
+
+void writePPM(const char* filename, const uchar4* h_output_buffer, int width, int height)
+{
+	// Open file for writing
+	std::ofstream file(filename, std::ios::out | std::ios::binary);
+	if(!file)
+	{
+		std::cerr << "Error opening file: " << filename << std::endl;
+		return;
+	}
+
+	// Write PPM header
+	file << "P6\n" << width << " " << height << "\n255\n";
+
+	// Write pixel data
+	for(int i = 0; i < width * height; ++i)
+	{
+		file << h_output_buffer[i].x << h_output_buffer[i].y << h_output_buffer[i].z;
+	}
+
+	// Close file
+	file.close();
+
+	std::cout << "PPM file saved: " << filename << std::endl;
+}
 
 inline void cudaCheck(cudaError_t error, const char* call, const char* file, unsigned int line)
 {
@@ -85,6 +116,25 @@ int main()
 	}
 
 	std::cout << "Hello, OptiX!" << std::endl;
+
+	// Initialize GLFW
+	if(!glfwInit())
+	{
+		fprintf(stderr, "Failed to initialize GLFW\n");
+		return -1;
+	}
+
+	glfwSetErrorCallback(errorCallback);
+
+	GLFWwindow* window = glfwCreateWindow(width, height, "Optix GLFW Example", NULL, NULL);
+	if(!window)
+	{
+		glfwTerminate();
+		return -1;
+	}
+
+	// Make the window's context current
+	glfwMakeContextCurrent(window);
 
 	//now do your thing:
 
@@ -368,6 +418,21 @@ int main()
 
 	//display buffer in glfw/image
 
+	writePPM("accumulatedFrame_optix.ppm", h_output_buffer, width, height);
+
+	while(!glfwWindowShouldClose(window))
+	{
+		// Clear the framebuffer
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		// Access framebuffer and update GLFW window
+		glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_BYTE, h_output_buffer);
+
+		// Swap buffers and poll for events
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
 	//delete
 	delete[] h_output_buffer;
 
@@ -375,6 +440,8 @@ int main()
 	CUDA_CHECK(cudaStreamDestroy(stream));
 
 	optixDeviceContextDestroy(context);
+
+	glfwTerminate();
 
 	return 0;
 }

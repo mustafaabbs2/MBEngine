@@ -41,6 +41,9 @@ ${CPP_SOURCES}
 ${CUDA_SOURCES}
 )
 
+find_package(glfw3)
+
+
 find_package(PNG REQUIRED)
 include_directories(${PNG_INCLUDE_DIR})
 
@@ -105,7 +108,10 @@ find_package(OptiX REQUIRED)
 
 set_source_files_properties(${OPTIX_SOURCES} PROPERTIES LANGUAGE CUDA)
 
-include_directories(${OptiX_INSTALL_DIR}/include)
+include_directories(
+${OptiX_INSTALL_DIR}/include
+${glfw_INCLUDE_DIRS}
+)
 
 add_executable(OptixRayTracer 
 ${OPTIX_SOURCES}
@@ -161,7 +167,9 @@ ${OptiX_INCLUDE}
 include/)
 
 target_link_libraries(OptixRayTracer 
-${CUDA_LIBRARIES})
+${CUDA_LIBRARIES}
+${glfw_LIBRARIES}
+)
 
 
 ##The OSPray Project...............................................
@@ -171,7 +179,6 @@ set(OSPRAY_DIR "C:/Program Files/Intel/OSPRay v3/lib/cmake/ospray-3.1.0" CACHE P
 
 # Use find_package to locate OSPray
 find_package(ospray 3.1.0 REQUIRED CONFIG PATHS ${OSPRAY_DIR})
-find_package(glfw3)
 
 include_directories(
 ${glfw_INCLUDE_DIRS}
