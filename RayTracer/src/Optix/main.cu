@@ -151,6 +151,11 @@ int main()
 	//
 	// Create module
 	//
+
+	// Now that we have created our geometry, we need to specify the OptiX programs we want to use to render it.
+	// The CUDA code for our programs first needs to be converted to NVIDIA’s intermediate code representation, PTX, usually via the CUDA nvcc compiler.
+	// The programs in PTX form are then compiled into OptixModules.
+
 	OptixModule module = nullptr;
 	OptixPipelineCompileOptions pipeline_compile_options = {};
 	{
@@ -166,24 +171,37 @@ int main()
 		pipeline_compile_options.pipelineLaunchParamsVariableName = "params";
 		pipeline_compile_options.usesPrimitiveTypeFlags = OPTIX_PRIMITIVE_TYPE_FLAGS_TRIANGLE;
 
-		//get input data
-		// size_t inputSize = 0;
-		// const char* input =
-		// 	sutil::getInputData(OPTIX_SAMPLE_NAME, OPTIX_SAMPLE_DIR, "optixTriangle.cu", inputSize);
+		//at this point, you'll need to compile a .cu file into .ptx
+		// read file into string
+		std::string filename =
+			"optixTriangleKernel.ptx"; // make sure it is in the working directory
+		std::ifstream file(filename.c_str(), std::ios::binary);
+		std::string file_contents;
+		if(file.good())
+		{
+			// Found usable source file
+			std::vector<unsigned char> buffer =
+				std::vector<unsigned char>(std::istreambuf_iterator<char>(file), {});
+			file_contents.assign(buffer.begin(), buffer.end());
+		}
+		char log[2048];
+		size_t sizeof_log = sizeof(log);
 
-		// OPTIX_CHECK_LOG(optixModuleCreate(context,
-		// 								  &module_compile_options,
-		// 								  &pipeline_compile_options,
-		// 								  input,
-		// 								  inputSize,
-		// 								  LOG,
-		// 								  &LOG_SIZE,
-		// 								  &module));
+		optixModuleCreate(context,
+						  &module_compile_options,
+						  &pipeline_compile_options,
+						  file_contents.c_str(),
+						  file_contents.size(),
+						  log,
+						  &sizeof_log,
+						  &module);
 	}
 
 	//
 	// Create program groups
 	//
+	//  One or more modules are used to create an OptixProgramGroup.
+	// Those program groups are then linked into an OptixPipeline, enabling them to work together on the GPU.
 	OptixProgramGroup raygen_prog_group = nullptr;
 	OptixProgramGroup miss_prog_group = nullptr;
 	OptixProgramGroup hitgroup_prog_group = nullptr;
@@ -293,6 +311,9 @@ int main()
 
 		sbt.raygenRecord = raygen_record;
 		sbt.missRecordBase = miss_record;
+		// SBT stride and SBT offset are used to implement multiple ray types where a different set of programs are used for each type.
+		// The stride indicates the total number of ray types in use (eg, many rendering applications use a radiance and shadow ray type and would set this to two).
+		// The offset is used to select the correct program for a given ray type.
 		sbt.missRecordStrideInBytes = sizeof(MissSbtRecord);
 		sbt.missRecordCount = 1;
 		sbt.hitgroupRecordBase = hitgroup_record;

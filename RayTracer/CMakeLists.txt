@@ -74,6 +74,7 @@ target_link_libraries(RayTracer
 ${CUDA_LIBRARIES}
 PNG::PNG)
 
+##The Optix Project...............................................
 
 #Make the optix stuff work
 
@@ -81,7 +82,11 @@ set(OPTIX_SOURCES
     src/Optix/main.cu
 )
 
-##The Optix Project...............................................
+set(SHADER_SOURCES
+    src/Optix/optixTriangleKernel.cu
+)
+
+
 #make it find optix
 
 set(OptiX_INSTALL_DIR "C:/ProgramData/NVIDIA Corporation/OptiX SDK 8.0.0")
@@ -96,12 +101,45 @@ add_executable(OptixRayTracer
 ${OPTIX_SOURCES}
 )
 
-
 message("OptiX_INCLUDE is: ${OptiX_INCLUDE}")
 
+# Define the PTX output files
 
-#set_source_files_properties(${OPTIX_SOURCES} PROPERTIES CUDA_PTX_COMPILATION ON)
-#set_source_files_properties(${OPTIX_SOURCES}  PROPERTIES COMPILE_FLAGS "--keep -rdc=true")
+set(PTX_FILES)
+foreach(SHADER_SOURCE ${SHADER_SOURCES})
+    get_filename_component(FILE_NAME ${SHADER_SOURCE} NAME_WE)
+    list(APPEND PTX_FILES "${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.ptx") #note, it needs to be in the bin/ folder so the executable can find it
+endforeach()
+
+set_source_files_properties(${SHADER_SOURCES} PROPERTIES CUDA_PTX_COMPILATION ON)
+set_source_files_properties(${SHADER_SOURCES}  PROPERTIES COMPILE_FLAGS "--keep -rdc=true")
+
+#Add custom commands to compile the shader sources to PTX
+
+foreach(SHADER_SOURCE ${SHADER_SOURCES})
+    message("Compiling shader source: ${SHADER_SOURCE}")
+
+    get_filename_component(FILE_NAME ${SHADER_SOURCE} NAME_WE)
+    set(PTX_FILE "${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.ptx")
+    set(SHADER_SOURCE "${CMAKE_SOURCE_DIR}/RayTracer/src/Optix/${FILE_NAME}.cu")
+
+    add_custom_command(
+        OUTPUT ${PTX_FILE}
+        COMMAND ${CMAKE_CUDA_COMPILER} 
+                -I${OptiX_INCLUDE}
+                 ${SHADER_SOURCE} -ptx 
+                 -o ${PTX_FILE}
+                -lcudadevrt
+        DEPENDS ${SHADER_SOURCE}
+        COMMENT "Compiling ${SHADER_SOURCE} to ${PTX_FILE}"
+    )
+endforeach()
+
+# Add custom target for PTX files
+add_custom_target(CompileShaders ALL DEPENDS ${PTX_FILES})
+
+# Ensure the PTX files are compiled before the main executable
+add_dependencies(OptixRayTracer CompileShaders)
 
 
 # Add include directories

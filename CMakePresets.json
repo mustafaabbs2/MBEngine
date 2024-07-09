@@ -24,6 +24,23 @@
 			}
 		},
 		{
+			"name": "MSVC_Base_19",
+			"displayName": "MSVC",
+			"description": "MSVC",
+			"generator": "Visual Studio 16 2019",
+			"architecture": "x64",
+			"toolset": "v142,version=14.21",
+			"binaryDir": "${sourceDir}/build",
+			"hidden": true,
+			"warnings": {
+				"dev": false
+			},
+			"cacheVariables": {
+				"CMAKE_SYSTEM_VERSION": "10.0.18362.0",
+				"CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install"
+			}
+		},
+		{
 			"name": "MSVC_Debug",
 			"inherits": "MSVC_Base",
 			"displayName": "MSVC Debug",
