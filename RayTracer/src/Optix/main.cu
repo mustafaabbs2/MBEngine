@@ -13,6 +13,10 @@
 #include <stdexcept>
 #include <vector>
 
+#define TRIANGLE 0
+#define CUBE 1
+#define ISO 0
+
 #define CUDA_CHECK(call) cudaCheck(call, #call, __FILE__, __LINE__)
 #define OPTIX_CHECK(call) optixCheck(call, #call, __FILE__, __LINE__)
 
@@ -148,10 +152,35 @@ int main()
 		accel_options.buildFlags = OPTIX_BUILD_FLAG_NONE;
 		accel_options.operation = OPTIX_BUILD_OPERATION_BUILD;
 
+#if TRIANGLE
 		// Triangle build input: simple list of three vertices
 		const std::array<float3, 3> vertices = {
 			{{-0.5f, -0.5f, 0.0f}, {0.5f, -0.5f, 0.0f}, {0.0f, 0.5f, 0.0f}}};
-
+#elif CUBE
+		const std::vector<float3> vertices = {
+			{-0.5f, -0.5f, -0.5f},
+			{0.5f, -0.5f, -0.5f},
+			{0.5f, 0.5f, -0.5f},
+			{-0.5f, 0.5f, -0.5f}, // back face
+			{-0.5f, -0.5f, 0.5f},
+			{0.5f, -0.5f, 0.5f},
+			{0.5f, 0.5f, 0.5f},
+			{-0.5f, 0.5f, 0.5f} // front face
+		};
+#elif ISO
+		const std::vector<float3> vertices = {{0.0f, 1.0f, 1.61803398875f},
+											  {0.0f, 1.0f, -1.61803398875f},
+											  {0.0f, -1.0f, 1.61803398875f},
+											  {0.0f, -1.0f, -1.61803398875f},
+											  {1.0f, 1.61803398875f, 0.0f},
+											  {1.0f, -1.61803398875f, 0.0f},
+											  {-1.0f, 1.61803398875f, 0.0f},
+											  {-1.0f, -1.61803398875f, 0.0f},
+											  {1.61803398875f, 0.0f, 1.0f},
+											  {1.61803398875f, 0.0f, -1.0f},
+											  {-1.61803398875f, 0.0f, 1.0f},
+											  {-1.61803398875f, 0.0f, -1.0f}};
+#endif
 		const size_t vertices_size = sizeof(float3) * vertices.size();
 		CUdeviceptr d_vertices = 0;
 		CUDA_CHECK(cudaMalloc(reinterpret_cast<void**>(&d_vertices), vertices_size));
