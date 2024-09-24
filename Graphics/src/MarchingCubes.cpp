@@ -266,12 +266,19 @@ void vKeyboard(GLFWwindow* window, int key, int scancode, int action, int mods)
 		//Add code here to handle the increase in surface value
 		std::cout<<"Increase surface value"<<std::endl;
 
+		if(fTargetValue < 1000.0)
+		{
+			fTargetValue *= 1.1;
+		}
 
 		break;
 	case GLFW_KEY_X:
 		// Decrease surface value
 		// Add code here to handle the decrease in surface value
-
+		if(fTargetValue > 1.0)
+		{
+			fTargetValue /= 1.1;
+		}
 		break;
 	}
 }

@@ -13,8 +13,8 @@
 #include <stdexcept>
 #include <vector>
 
-#define TRIANGLE 0
-#define CUBE 1
+#define TRIANGLE 1
+#define CUBE 0
 #define ISO 0
 
 #define CUDA_CHECK(call) cudaCheck(call, #call, __FILE__, __LINE__)

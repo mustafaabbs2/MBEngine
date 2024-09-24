@@ -66,3 +66,9 @@ ${OPENGL_LIBRARIES}
 ${glfw_LIBRARIES}
 ${GLEW_LIBRARIES}
 )
+
+set(SNET_SOURCES
+    src/SurfaceNets.c
+)
+
+add_executable(SurfaceNets ${SNET_SOURCES})

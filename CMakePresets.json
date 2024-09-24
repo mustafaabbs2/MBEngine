@@ -12,17 +12,17 @@
 			"description": "MSVC",
 			"generator": "Visual Studio 17 2022",
 			"architecture": "x64",
-			"toolset": "v142,version=14.29",
+			"toolset": "v143,version=14.36",
 			"binaryDir": "${sourceDir}/build",
 			"hidden": true,
 			"warnings": {
 				"dev": false
 			},
 			"cacheVariables": {
-				"CMAKE_SYSTEM_VERSION": "10.0.18362.0",
+				"CMAKE_SYSTEM_VERSION": "10.0.22000.0",
 				"CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install",
-				"CMAKE_CUDA_COMPILER": "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.6/bin/nvcc.exe",
-				"CUDA_TOOLKIT_ROOT_DIR": "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.6"
+				"CMAKE_CUDA_COMPILER": "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.8/bin/nvcc.exe",
+				"CUDA_TOOLKIT_ROOT_DIR": "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.8"
 			}
 		},
 		{
@@ -38,7 +38,7 @@
 				"dev": false
 			},
 			"cacheVariables": {
-				"CMAKE_SYSTEM_VERSION": "10.0.18362.0",
+				"CMAKE_SYSTEM_VERSION": "10.0.22000.0",
 				"CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install"
 			}
 		},
