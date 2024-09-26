@@ -56,7 +56,7 @@ ${GLEW_LIBRARIES}
 #MarchingCubes...
 
 set(MCUBE_SOURCES
-    src/MarchingCubes.cpp
+    src/MarchingCubes2.cpp
 )
 
 add_executable(MarchingCubes ${MCUBE_SOURCES})

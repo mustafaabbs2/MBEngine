@@ -170,6 +170,43 @@ void SurfaceNets(float* data, int* dims, float level, Mesh* mesh, int storeFlag)
 	mesh->nt = faces_length;
 }
 
+void writePlyFile(const char* filename, Mesh m)
+{
+	FILE* file = fopen(filename, "w");
+	if(file == NULL)
+	{
+		fprintf(stderr, "Error opening file for writing: %s\n", filename);
+		return;
+	}
+
+	// Write PLY header
+	fprintf(file, "ply\n");
+	fprintf(file, "format ascii 1.0\n");
+	fprintf(file, "element vertex %d\n", m.np);
+	fprintf(file, "property float x\n");
+	fprintf(file, "property float y\n");
+	fprintf(file, "property float z\n");
+	fprintf(file, "element face %d\n", m.nt);
+	fprintf(file, "property list uchar int vertex_index\n");
+	fprintf(file, "end_header\n");
+
+	// Write vertex data
+	for(int i = 0; i < m.np; i++)
+	{
+		fprintf(file, "%f %f %f\n", m.p[i].x, m.p[i].y, m.p[i].z);
+	}
+
+	// Write triangle data
+	for(int i = 0; i < m.nt; i++)
+	{
+		fprintf(file, "3 %d %d %d\n", m.t[i].a, m.t[i].b, m.t[i].c);
+	}
+
+	// Close the file
+	fclose(file);
+}
+
+
 int main(int argc, char* argv[])
 {
 	//	FILE *f;
@@ -201,6 +238,9 @@ int main(int argc, char* argv[])
 		printf("%f %f %f\n", m.p[i].x, m.p[i].y, m.p[i].z);
 	for(i = 0; i < m.nt; i++)
 		printf("%i %i %i\n", m.t[i].a, m.t[i].b, m.t[i].c);
+
+	writePlyFile("surfacenets.ply", m);
+
 
 	return 0;
 }
