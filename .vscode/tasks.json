@@ -79,9 +79,14 @@
             "label": "CMake Configure (Debug)",
             "type": "shell",
             "windows": {
-                "command": "cmake --preset=MSVC_Debug",
+                "command": "cmake --preset=MSVC_Debug"
             },
-            "command": "cmake --preset=Linux_Debug",
+            "osx": {
+                "command": "cmake --preset=MacOS_Debug"
+            },
+            "linux": {
+                "command": "cmake --preset=Linux_Debug"
+            },
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceRoot}"
@@ -91,9 +96,14 @@
             "label": "CMake Configure (Release)",
             "type": "shell",
             "windows": {
-                "command": "cmake --preset=MSVC_Release",
+                "command": "cmake --preset=MSVC_Release"
             },
-            "command": "cmake --preset=Linux_Release",
+            "osx": {
+                "command": "cmake --preset=MacOS_Release"
+            },
+            "linux": {
+                "command": "cmake --preset=Linux_Release"
+            },
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceRoot}"

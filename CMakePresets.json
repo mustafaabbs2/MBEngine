@@ -105,6 +105,46 @@
 				"CMAKE_BUILD_TYPE": "Release",
 				"CMAKE_MODULE_PATH": "${sourceDir}/build/Release"
 			}
+		},
+		{
+			"name": "MacOS_Base",
+			"displayName": "macOS",
+			"description": "macOS",
+			"generator": "Ninja",
+			"binaryDir": "${sourceDir}/build",
+			"hidden": true,
+			"warnings": {
+				"dev": false
+			},
+			"cacheVariables": {
+				"CMAKE_C_COMPILER": "clang",
+				"CMAKE_CXX_COMPILER": "clang++",
+				"CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install"
+			}
+		},
+		{
+			"name": "MacOS_Debug",
+			"inherits": "MacOS_Base",
+			"displayName": "MacOS Debug",
+			"description": "MacOS Debug",
+			"binaryDir": "${sourceDir}/build/Debug",
+			"hidden": false,
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug",
+				"CMAKE_MODULE_PATH": "${sourceDir}/build/Debug"
+			}
+		},
+		{
+			"name": "MacOS_Release",
+			"inherits": "Linux_Base",
+			"displayName": "MacOS Release",
+			"description": "MacOS Release",
+			"binaryDir": "${sourceDir}/build/Release",
+			"hidden": false,
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Release",
+				"CMAKE_MODULE_PATH": "${sourceDir}/build/Release"
+			}
 		}
 	],
 	"buildPresets": [
