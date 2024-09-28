@@ -136,7 +136,7 @@
 		},
 		{
 			"name": "MacOS_Release",
-			"inherits": "Linux_Base",
+			"inherits": "MacOS_Base",
 			"displayName": "MacOS Release",
 			"description": "MacOS Release",
 			"binaryDir": "${sourceDir}/build/Release",
